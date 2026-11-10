@@ -1,0 +1,6 @@
+.workbench { max-width: 720px; margin: 32px auto; padding: 24px; background: var(--fastui-surface); color: var(--fastui-text); font: 14px/1.6 var(--fastui-font); border: 1px solid var(--fastui-border); border-radius: 8px; }
+.workbench form { display: grid; gap: 12px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+.workbench output { color: var(--fastui-secondary); }
+.workbench p { max-width: 65ch; }
+@media (max-width: 600px) { .workbench { margin: 12px; padding: 16px; } }

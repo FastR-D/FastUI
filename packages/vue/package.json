@@ -1,0 +1,17 @@
+{
+  "name": "@fastrd/ui-vue",
+  "version": "0.1.0",
+  "description": "Vue primitives and accessible native controls for FastUI",
+  "type": "module",
+  "license": "MIT",
+  "repository": {"type":"git","url":"git+https://github.com/FastR-D/FastUI.git","directory":"packages/vue"},
+  "publishConfig": {"access":"public"},
+  "files": ["dist", "LICENSE", "README.md", "NOTICE.md"],
+  "sideEffects": ["**/*.css"],
+  "dependencies": {"@fastrd/ui-foundation":"https://github.com/FastR-D/FastUI/releases/download/v0.1.0/fastrd-ui-foundation-0.1.0.tgz"},
+  "peerDependencies": {"vue":"^3.5.0"},
+  "exports": {
+    ".": {"types":"./dist/index.d.ts","import":"./dist/index.js"},
+    "./styles.css": "./dist/styles.css"
+  }
+}

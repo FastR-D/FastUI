@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FastUI HTML</title><link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/controls.css">
+<script src="/assets/color-mode.js" data-storage-key="fastui-example-mode"></script>
+<style>.workbench{max-width:680px;margin:32px auto;padding:24px;background:var(--fastui-surface);color:var(--fastui-text);font:14px/1.6 var(--fastui-font);border:1px solid var(--fastui-border);border-radius:8px}form{display:grid;gap:16px} .toolbar{display:flex;gap:8px;flex-wrap:wrap}</style>
+</head><body><main class="workbench"><h1>Export settings</h1><p>Native controls, shared design values.</p>
+<form><label class="fastui-field">Name<input class="fastui-input" aria-label="Name" required></label>
+<label class="fastui-field">Format<select class="fastui-select" aria-label="Format"><option>PDF</option><option>SVG</option></select></label>
+<div class="toolbar"><button class="fastui-button fastui-button--primary">Save</button><button class="fastui-button" type="button" id="open">Open settings</button><button class="fastui-button" disabled>Unavailable</button></div><output id="saved">0</output></form>
+<div data-testid="preview"><input aria-label="Preview input"><p>Preview content stays native.</p></div>
+<dialog class="fastui-dialog" aria-label="Settings"><div class="fastui-modal-body"><input class="fastui-input" aria-label="Dialog name" autofocus><form method="dialog"><button class="fastui-button">Close settings</button></form></div></dialog>
+</main><script type="module" src="/main.js"></script></body></html>

@@ -1,0 +1,8 @@
+{
+  "name": "fastui-vue-example",
+  "private": true,
+  "type": "module",
+  "scripts": {"build":"vue-tsc --noEmit && vite build","dev":"vite --host 127.0.0.1"},
+  "dependencies": {"@fastrd/ui-foundation":"https://github.com/FastR-D/FastUI/releases/download/v0.1.0/fastrd-ui-foundation-0.1.0.tgz","@fastrd/ui-vue":"https://github.com/FastR-D/FastUI/releases/download/v0.1.0/fastrd-ui-vue-0.1.0.tgz","vue":"^3.5.0"},
+  "devDependencies": {"vite":"~6.4.1","typescript":"~5.7.3","vue-tsc":"~2.2.0","@vitejs/plugin-vue":"^5.2.0"}
+}
