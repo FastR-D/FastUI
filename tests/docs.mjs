@@ -9,7 +9,7 @@ const base = (process.env.DOCS_BASE_PATH || '/').replace(/\/?$/, '/')
 const server = await preview({ configFile: resolve('docs/vite.config.ts'), preview: { host: '127.0.0.1', port: 0 } })
 const origin = `http://127.0.0.1:${server.httpServer.address().port}`
 const url = origin + base
-const browser = await chromium.launch()
+const browser = await chromium.launch(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {})
 const results = []
 try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce', colorScheme: 'light' })

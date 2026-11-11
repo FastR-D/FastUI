@@ -30,10 +30,11 @@ jobs:
       - run: pnpm docs:build
         env:
           DOCS_BASE_PATH: /
-      - run: pnpm exec playwright install --with-deps chromium
+      # ubuntu-24.04 already includes Chrome; avoid a second browser/apt download.
       - run: pnpm docs:test
         env:
           DOCS_BASE_PATH: /
+          PLAYWRIGHT_CHANNEL: chrome
       - name: Checkout pinned FastDeploy packager
         uses: actions/checkout@v4
         with:
