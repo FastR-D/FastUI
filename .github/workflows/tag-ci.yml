@@ -26,7 +26,8 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test:release && pnpm docs:build
+      # Package publishing is validated separately by check.yml.
+      - run: pnpm docs:build
         env:
           DOCS_BASE_PATH: /
       - run: pnpm exec playwright install --with-deps chromium
