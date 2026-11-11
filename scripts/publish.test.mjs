@@ -16,7 +16,17 @@ const sha = bytes => createHash('sha256').update(bytes).digest('hex')
 
 async function scenario(options = {}) {
   const events = []
+  let clock = 0
   const uploaded = new Set(options.existing ? packages.map(pkg => pkg.name) : [])
+  const uploadedAt = new Map([...uploaded].map(name => [name, 0]))
+  const spend = (ms, signal) => {
+    const remaining = Math.max(0, signal.expiresAt - clock)
+    if (ms >= remaining && !options.ignoreAbort) {
+      clock += remaining
+      throw new DOMException('Registry request timed out', 'TimeoutError')
+    }
+    clock += ms
+  }
   const env = { GITHUB_REPOSITORY: 'FastR-D/FastUI', GITHUB_EVENT_NAME: 'push', GITHUB_REF: `refs/tags/v${version}`,
     GITHUB_SHA: 'a'.repeat(40), npm_execpath: 'fixture-npm', ...options.env }
   const records = structuredClone(packages)
@@ -24,27 +34,38 @@ async function scenario(options = {}) {
   const bytes = Buffer.from(JSON.stringify(records))
   const results = { status: 'passed', scenarios: Array.from({ length: 53 }, (_, i) => `scenario-${i}`), packagesSha256: sha(bytes) }
   options.results?.(results)
-  const context = createContext({ Buffer, URL, AbortSignal, process: { env, argv: ['node', 'scripts/publish.mjs'], execPath: process.execPath },
+  const context = createContext({ Buffer, URL, AbortSignal: { timeout: timeoutMs => ({ timeoutMs, expiresAt: clock + timeoutMs }) }, process: { env, argv: ['node', 'scripts/publish.mjs'], execPath: process.execPath },
     console: { log: (...args) => events.push(['log', args.join(' ')]) },
-    fetch: async url => {
+    fetch: async (url, { signal }) => {
+      assert.ok(signal.timeoutMs > 0 && signal.timeoutMs <= 15000)
       assert.equal(new URL(url).origin, 'https://registry.npmjs.org')
       const path = decodeURIComponent(new URL(url).pathname)
       const pkg = packages.find(pkg => path.startsWith(`/${pkg.name}/`))
       assert.ok(pkg, `Unexpected registry request: ${path}`)
+      events.push(['request', { name: pkg.name, at: clock, budget: signal.timeoutMs, kind: path.endsWith('.tgz') ? 'download' : 'metadata' }])
       if (path.endsWith('.tgz')) {
         events.push(['download', pkg.name])
+        if (options.abortDownload) throw new DOMException('Download interrupted', 'AbortError')
+        spend(options.downloadDurationMs || 0, signal)
         return new Response(options.corruptDownload ? 'corrupt' : archives.get(pkg.name), { status: options.downloadStatus || 200 })
       }
       events.push(['metadata', pkg.name])
       if (options.lookupError) throw new Error('Registry timeout')
       if (options.lookupStatus) return new Response('', { status: options.lookupStatus })
-      if (options.alwaysMissing || !uploaded.has(pkg.name)) return new Response('', { status: 404 })
+      if (uploaded.has(pkg.name)) {
+        if (options.abortLookup) throw new DOMException('Lookup interrupted', 'AbortError')
+        spend(options.metadataDurationMs || 0, signal)
+        if (options.postUploadStatus) return new Response('', { status: options.postUploadStatus })
+      }
+      if (options.alwaysMissing || !uploaded.has(pkg.name) || clock - uploadedAt.get(pkg.name) < (options.visibleAfterMs || 0)) return new Response('', { status: 404 })
       const published = { name: pkg.name, version, dist: {
         integrity: `sha512-${createHash('sha512').update(archives.get(pkg.name)).digest('base64')}`,
         tarball: `https://registry.npmjs.org/${pkg.name}/-/${pkg.file}`,
       } }
       options.metadata?.(published)
-      return Response.json(published)
+      const response = Response.json(published)
+      response.json = async () => { spend(options.metadataBodyMs || 0, signal); return published }
+      return response
     },
   })
   const externals = {
@@ -56,7 +77,12 @@ async function scenario(options = {}) {
       return value
     } },
     'node:crypto': { createHash },
-    'node:timers/promises': { setTimeout: async ms => events.push(['delay', ms]) },
+    'node:perf_hooks': { performance: { now: () => clock } },
+    'node:timers/promises': { setTimeout: async ms => {
+      events.push(['delay', ms])
+      if (options.abortDelay) throw new DOMException('Propagation wait interrupted', 'AbortError')
+      clock += ms + (options.oversleepMs || 0)
+    } },
     'node:child_process': {
       execFileSync: (command, args, config) => {
         if (command === 'git') {
@@ -77,6 +103,7 @@ async function scenario(options = {}) {
         const pkg = packages.find(pkg => args[2].endsWith(pkg.file))
         events.push(['publish', pkg.name])
         uploaded.add(pkg.name)
+        uploadedAt.set(pkg.name, clock)
         return { status: options.publishFailure ? 1 : 0 }
       },
     },
@@ -96,8 +123,8 @@ async function scenario(options = {}) {
     const entry = await load('entry')
     await entry.link(load)
     await entry.evaluate()
-    return { events }
-  } catch (error) { return { events, error } }
+    return { events, clock }
+  } catch (error) { return { events, clock, error } }
 }
 
 test('foundation public tarball is confirmed before either framework publish', async () => {
@@ -112,6 +139,109 @@ test('identical existing versions are downloaded and checked without writes', as
   assert.ifError(error)
   assert.equal(events.filter(([kind]) => kind === 'publish').length, 0)
   assert.equal(events.filter(([kind]) => kind === 'download').length, 3)
+})
+
+test('four-minute propagation for each package still confirms tarballs before continuing', async () => {
+  const { events, clock, error } = await scenario({ visibleAfterMs: 240000 })
+  assert.ifError(error)
+  assert.equal(clock, 720000)
+  assert.ok(events.filter(([kind]) => kind === 'delay').every(([, ms]) => ms === 15000))
+  assert.deepEqual(events.filter(([kind]) => ['publish', 'download'].includes(kind)),
+    packages.flatMap(pkg => [['publish', pkg.name], ['download', pkg.name]]))
+})
+
+test('observed 4m7s propagation completes without a fixed attempt limit', async () => {
+  const { events, clock, error } = await scenario({ visibleAfterMs: 247000 })
+  assert.ifError(error)
+  assert.equal(clock, 765000)
+  assert.equal(events.filter(([kind]) => kind === 'download').length, 3)
+})
+
+test('metadata and tarball requests use the remaining window near its deadline', async () => {
+  const { events, clock, error } = await scenario({ visibleAfterMs: 590000, metadataDurationMs: 1000, downloadDurationMs: 6000 })
+  assert.ifError(error)
+  assert.equal(clock, 3 * 599000)
+  const downloads = events.filter(([kind, request]) => kind === 'request' && request.kind === 'download')
+  assert.deepEqual(downloads.map(([, request]) => request.budget), [7000, 7000, 7000])
+})
+
+test('404 waits consume request time and shorten the final sleep to the deadline', async () => {
+  const { events, clock, error } = await scenario({ alwaysMissing: true, metadataDurationMs: 1000 })
+  assert.match(error.message, /within 10 minutes/)
+  assert.equal(clock, 600000)
+  assert.equal(events.filter(([kind]) => kind === 'delay').at(-1)[1], 7000)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+  assert.ok(events.filter(([kind]) => kind === 'request').every(([, request]) => request.at < 600000))
+})
+
+test('a slow final metadata request is aborted at the remaining wall-clock budget', async () => {
+  const { events, clock, error } = await scenario({ alwaysMissing: true, metadataDurationMs: 8000 })
+  assert.equal(error.name, 'TimeoutError')
+  assert.equal(clock, 600000)
+  assert.equal(events.filter(([kind]) => kind === 'request').at(-1)[1].budget, 2000)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+})
+
+test('response headers and metadata body share one request timeout without retry', async () => {
+  const { events, clock, error } = await scenario({ metadataDurationMs: 10000, metadataBodyMs: 6000 })
+  assert.equal(error.name, 'TimeoutError')
+  assert.equal(clock, 15000)
+  assert.equal(events.filter(([kind]) => kind === 'delay').length, 0)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+})
+
+test('tarball download is aborted when the remaining confirmation window expires', async () => {
+  const { events, clock, error } = await scenario({ visibleAfterMs: 590000, metadataDurationMs: 1000, downloadDurationMs: 8000 })
+  assert.equal(error.name, 'TimeoutError')
+  assert.equal(clock, 600000)
+  assert.equal(events.filter(([kind]) => kind === 'request').at(-1)[1].budget, 7000)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+})
+
+test('event-loop oversleep never permits a new request after the deadline', async () => {
+  const { events, clock, error } = await scenario({ alwaysMissing: true, oversleepMs: 600000 })
+  assert.match(error.message, /within 10 minutes/)
+  assert.equal(clock, 615000)
+  assert.equal(events.filter(([kind]) => kind === 'metadata').length, 2)
+  assert.equal(events.filter(([kind]) => kind === 'delay').length, 1)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+})
+
+for (const [name, options] of [
+  ['late metadata body', { metadataBodyMs: 600000 }],
+  ['late tarball body', { downloadDurationMs: 600000 }],
+]) test(`deadline rejects ${name} even when transport ignores its abort signal`, async () => {
+  const { events, error } = await scenario({ ...options, ignoreAbort: true })
+  assert.match(error.message, /within 10 minutes/)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+})
+
+for (const status of [401, 403, 429, 503]) test(`post-upload HTTP ${status} fails without propagation retry`, async () => {
+  const { events, error } = await scenario({ postUploadStatus: status })
+  assert.match(error.message, new RegExp(`HTTP ${status}`))
+  assert.equal(events.filter(([kind]) => kind === 'metadata').length, 2)
+  assert.equal(events.filter(([kind]) => kind === 'delay').length, 0)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+})
+
+for (const [name, options] of [
+  ['metadata lookup', { abortLookup: true }],
+  ['404 wait', { abortDelay: true, visibleAfterMs: 240000 }],
+  ['tarball download', { abortDownload: true }],
+]) test(`interrupted ${name} propagates AbortError without retry or framework publication`, async () => {
+  const { events, error } = await scenario(options)
+  assert.equal(error.name, 'AbortError')
+  assert.equal(events.filter(([kind]) => kind === 'metadata').length, 2)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+  assert.equal(events.filter(([kind]) => kind === 'delay').length, options.abortDelay ? 1 : 0)
+})
+
+test('integrity stays strict after four minutes of 404 propagation', async () => {
+  const { events, clock, error } = await scenario({ visibleAfterMs: 240000, metadata: manifest => { manifest.dist.integrity = 'sha512-wrong' } })
+  assert.match(error.message, /version\/integrity differs/)
+  assert.equal(clock, 240000)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+  assert.equal(events.filter(([kind]) => kind === 'download').length, 0)
 })
 
 // Failure classes: source identity/cleanliness, complete verified package set,
@@ -141,19 +271,20 @@ const rejections = [
   ['registry timeout', { lookupError: true }, /timeout/, 0],
   ['published metadata integrity mismatch', { existing: true, metadata: manifest => { manifest.dist.integrity = 'sha512-wrong' } }, /version\/integrity differs/, 0],
   ['publication failure', { publishFailure: true }, /Publication failed/, 1],
-  ['public version remains absent', { alwaysMissing: true }, /after 4 checks/, 1],
+  ['public version remains absent', { alwaysMissing: true }, /within 10 minutes/, 1],
   ['post-upload wrong version', { metadata: manifest => { manifest.version = '9.9.9' } }, /version\/integrity differs/, 1],
   ['public tarball wrong origin', { metadata: manifest => { manifest.dist.tarball = 'https://other.invalid/a.tgz' } }, /official npm/, 1],
   ['public tarball HTTP error', { downloadStatus: 404 }, /download failed/, 1],
   ['public tarball corrupt', { corruptDownload: true }, /tarball integrity differs/, 1],
 ]
 for (const [name, options, message, writes] of rejections) test(`rejects ${name}`, async () => {
-  const { events, error } = await scenario(options)
+  const { events, clock, error } = await scenario(options)
   assert.ok(error)
   assert.match(error.message, message)
   assert.equal(events.filter(([kind]) => kind === 'publish').length, writes)
   if (options.alwaysMissing) {
-    assert.equal(events.filter(([kind]) => kind === 'metadata').length, 5)
-    assert.equal(events.filter(([kind]) => kind === 'delay').length, 3)
+    assert.equal(clock, 600000)
+    assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
+    assert.ok(events.filter(([kind]) => kind === 'request').every(([, request]) => request.at < 600000))
   }
 })

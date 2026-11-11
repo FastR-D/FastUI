@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { setTimeout as delay } from 'node:timers/promises'
+import { performance } from 'node:perf_hooks'
 import './check-registry.mjs'
 
 const registry = 'https://registry.npmjs.org'
@@ -58,8 +59,8 @@ if (process.argv[2] !== '--check-source') {
     }
     return { name: source.name, archive, integrity: `sha512-${hash('sha512', bytes, 'base64')}` }
   }))
-  const metadata = async candidate => {
-    const response = await fetch(`${registry}/${encodeURIComponent(candidate.name)}/${version}`, { signal: AbortSignal.timeout(15000), redirect: 'error' })
+  const metadata = async (candidate, timeoutMs = 15000) => {
+    const response = await fetch(`${registry}/${encodeURIComponent(candidate.name)}/${version}`, { signal: AbortSignal.timeout(timeoutMs), redirect: 'error' })
     if (response.status === 404) return null
     if (!response.ok) throw new Error(`Registry lookup failed for ${candidate.name}: HTTP ${response.status}`)
     const published = await response.json()
@@ -75,19 +76,29 @@ if (process.argv[2] !== '--check-source') {
         '--tag=' + (version.includes('-') ? 'next' : 'latest')], { stdio: 'inherit' })
       if (result.status !== 0) throw new Error(`Publication failed: ${candidate.name}`)
     } else console.log(`Already published with identical integrity: ${candidate.name}@${version}`)
-    // Only temporary 404 visibility is retried: 4 requests, 2s apart, 15s/request.
+    // Registry processing can take minutes after npm reports success. Bound the
+    // whole confirmation (including download) by elapsed time, retrying only 404.
+    const deadline = performance.now() + 10 * 60 * 1000
+    const deadlineError = new Error(`Public registry confirmation did not complete within 10 minutes: ${candidate.name}@${version}; rerun after propagation`)
     let published
-    for (let attempt = 0; attempt < 4; attempt++) {
-      published = await metadata(candidate)
+    while (performance.now() < deadline) {
+      const remaining = Math.floor(deadline - performance.now())
+      if (remaining <= 0) break
+      published = await metadata(candidate, Math.min(15000, remaining))
       if (published) break
-      if (attempt < 3) await delay(2000)
+      const wait = Math.min(15000, Math.max(0, deadline - performance.now()))
+      if (wait <= 0) break
+      console.log(`Public registry still processing ${candidate.name}@${version}; retry in ${wait}ms`)
+      await delay(wait)
     }
-    if (!published) throw new Error(`Public registry version not visible after 4 checks: ${candidate.name}@${version}; rerun after propagation`)
+    const remaining = Math.floor(deadline - performance.now())
+    if (!published || remaining <= 0) throw deadlineError
     const tarball = new URL(published.dist.tarball)
     if (tarball.origin !== registry) throw new Error(`Tarball must use official npm: ${tarball}`)
-    const download = await fetch(tarball, { signal: AbortSignal.timeout(15000), redirect: 'error' })
+    const download = await fetch(tarball, { signal: AbortSignal.timeout(Math.min(15000, remaining)), redirect: 'error' })
     if (!download.ok) throw new Error(`Public tarball download failed for ${candidate.name}: HTTP ${download.status}`)
     if (`sha512-${hash('sha512', Buffer.from(await download.arrayBuffer()), 'base64')}` !== candidate.integrity) throw new Error(`Public tarball integrity differs: ${candidate.name}`)
+    if (performance.now() >= deadline) throw deadlineError
     console.log(`Public resolver confirmed ${candidate.name}@${version} ${candidate.integrity} commit=${commit}`)
   }
 }
