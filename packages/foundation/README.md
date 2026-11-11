@@ -1,6 +1,6 @@
 # @fastrd/ui-foundation
 
-MIT · 0.1.1 · Framework-independent ESM, types and explicitly imported CSS.
+MIT · 0.1.2 · Framework-independent ESM, types and explicitly imported CSS.
 
 ```js
 import { initColorMode } from '@fastrd/ui-foundation'

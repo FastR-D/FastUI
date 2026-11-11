@@ -1,6 +1,6 @@
 # @fastrd/ui-react
 
-MIT · 0.1.1 · React/ReactDOM ^18.3 or ^19 peers · exact foundation 0.1.1 registry dependency.
+MIT · 0.1.2 · React/ReactDOM ^18.3 or ^19 peers · exact foundation 0.1.2 registry dependency.
 
 ```tsx
 import { Button, TextField, Dialog, Alert } from '@fastrd/ui-react'

@@ -1,6 +1,6 @@
 {
   "name": "@fastrd/ui-foundation",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Scoped design tokens, native controls and color mode for FastUI",
   "type": "module",
   "license": "MIT",
