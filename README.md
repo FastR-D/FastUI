@@ -16,24 +16,28 @@ Shared design foundations and UI components for FastR-D products.
 Three MIT packages provide framework-independent tokens/color mode, Vue controls,
 and React controls. API and migration details live in each package README.
 
-## Install 0.1.1
+## Install 0.1.2
 
 ```sh
-npm install @fastrd/ui-vue@0.1.1
-# Or install @fastrd/ui-react@0.1.1 or @fastrd/ui-foundation@0.1.1.
+npm install @fastrd/ui-vue@0.1.2
+# Or install @fastrd/ui-react@0.1.2 or @fastrd/ui-foundation@0.1.2.
 ```
 
-The framework packages depend on the exact foundation registry version 0.1.1.
+The framework packages depend on the exact foundation registry version 0.1.2.
 Keep the consumer lockfile.
 
-## 0.1.2 release candidate
+## Published 0.1.2
 
-The package manifests and examples target 0.1.2 for the next GitHub OIDC tag
-release. This patch updates release metadata and documentation; runtime JS, CSS,
+The package manifests and examples target the published GitHub OIDC tag release
+0.1.2. This patch updates release metadata and documentation; runtime JS, CSS,
 types and tokens retain the 0.1.1 behavior and bytes. The three packages share
 version 0.1.2, and Vue/React depend on exactly `@fastrd/ui-foundation@0.1.2`.
 Foundation is published and publicly resolved before Vue/React. The published
 0.1.1 bootstrap packages and previous release assets remain immutable.
+
+See [RELEASING.md](RELEASING.md) for future automatic tag releases. npm processing
+can take several minutes; main now allows a bounded ten-minute confirmation
+window per package, while preserving strict integrity checks and immutable tags.
 
 ## Build and verify
 
