@@ -1,6 +1,6 @@
 {
   "name":"fastui-html-example","private":true,"type":"module",
   "scripts":{"build":"node copy-assets.mjs && vite build","dev":"vite --host 127.0.0.1"},
-  "dependencies":{"@fastrd/ui-foundation":"https://github.com/FastR-D/FastUI/releases/download/v0.1.0/fastrd-ui-foundation-0.1.0.tgz"},
+  "dependencies":{"@fastrd/ui-foundation":"0.1.1"},
   "devDependencies":{"vite":"~6.4.1"}
 }

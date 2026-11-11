@@ -1,6 +1,6 @@
 # @fastrd/ui-vue
 
-MIT · 0.1.0 · Vue ^3.5 peer · foundation 0.1.0 dependency.
+MIT · 0.1.1 · Vue ^3.5 peer · exact foundation 0.1.1 registry dependency.
 
 ```vue
 <script setup>

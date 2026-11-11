@@ -5,7 +5,8 @@
   "workspaces": ["packages/*"],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "publish:tag": "node scripts/publish.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

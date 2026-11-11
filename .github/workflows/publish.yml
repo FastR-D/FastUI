@@ -1,0 +1,48 @@
+name: Publish npm packages
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Verify source, exact tag versions and official lock URLs
+        run: |
+          git fetch origin main:refs/remotes/origin/main "${GITHUB_REF}:${GITHUB_REF}"
+          node --version
+          npm --version
+          node --input-type=module -e "import {execFileSync} from 'node:child_process'; const [major,minor,patch]=execFileSync('npm',['--version'],{encoding:'utf8'}).trim().split('.').map(Number); if(major<11||(major===11&&(minor<5||(minor===5&&patch<1)))) throw new Error('OIDC requires npm >=11.5.1')"
+          node scripts/publish.mjs --check-source
+      - run: npm ci --registry=https://registry.npmjs.org
+      - run: npx --no-install playwright install --with-deps chromium
+      - name: Build and verify original packed candidates
+        run: npm run verify
+      - name: Check publication entry against controlled Git and registry boundaries
+        run: node --experimental-vm-modules --test scripts/publish.test.mjs
+      - name: Publish foundation then framework packages using OIDC
+        run: npm run publish:tag
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-publication-evidence
+          path: artifacts/
