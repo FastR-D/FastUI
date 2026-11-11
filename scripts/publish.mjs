@@ -31,8 +31,6 @@ if (spawnSync('git', ['merge-base', '--is-ancestor', commit, 'refs/remotes/origi
 console.log(`Release source verified: ${repository} ${tag} commit=${commit} HEAD=GITHUB_SHA; clean; ancestor of origin/main`)
 
 if (process.argv[2] !== '--check-source') {
-  const npm = process.env.npm_execpath
-  if (!npm) throw new Error('Run through npm run publish:tag')
   const directory = `artifacts/${version}`
   const packageBytes = await readFile(`${directory}/packages.json`)
   const packages = JSON.parse(packageBytes)
@@ -40,8 +38,8 @@ if (process.argv[2] !== '--check-source') {
     throw new Error('Verification must list exactly the three expected packages without duplicates')
   }
   const results = await json(`${directory}/results.json`)
-  if (results.status !== 'passed' || results.scenarios?.length !== 53 || results.packagesSha256 !== hash('sha256', packageBytes)) {
-    throw new Error('Passing 53-scenario verification must bind the exact packages.json digest')
+  if (results.status !== 'passed' || results.scenarios?.length !== 62 || results.packagesSha256 !== hash('sha256', packageBytes)) {
+    throw new Error('Passing 62-scenario verification must bind the exact packages.json digest')
   }
   // Validate the whole fixed package set before the first registry write.
   const candidates = await Promise.all(manifests.map(async source => {
@@ -72,7 +70,7 @@ if (process.argv[2] !== '--check-source') {
   for (const candidate of candidates) {
     const existing = await metadata(candidate)
     if (!existing) {
-      const result = spawnSync(process.execPath, [npm, 'publish', candidate.archive, '--access=public', '--provenance', '--registry=' + registry,
+      const result = spawnSync('npm', ['publish', candidate.archive, '--access=public', '--provenance', '--registry=' + registry,
         '--tag=' + (version.includes('-') ? 'next' : 'latest')], { stdio: 'inherit' })
       if (result.status !== 0) throw new Error(`Publication failed: ${candidate.name}`)
     } else console.log(`Already published with identical integrity: ${candidate.name}@${version}`)

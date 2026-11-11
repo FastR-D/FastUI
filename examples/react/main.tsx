@@ -1,5 +1,6 @@
 import { StrictMode, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { WorkbenchCases } from './WorkbenchCases'
 import { DialogCases } from './DialogCases'
 import { initColorMode } from '@fastrd/ui-foundation'
 import { Button, TextField, TextArea, Checkbox, Select, Dialog, Alert, Badge, EmptyState, Loading } from '@fastrd/ui-react'
@@ -17,6 +18,7 @@ function App() {
   const [saved, setSaved] = useState(0)
   const nameRef = useRef<HTMLInputElement>(null)
   return <main className="workbench">
+    <WorkbenchCases />
     <h1>Account settings</h1><p>Review your details and choose your export format.</p>
     <form onSubmit={e=>{e.preventDefault();setSaved(saved+1)}}>
       <label className="fastui-field">Name<TextField aria-label="Name" ref={nameRef} value={name} onChange={e=>setName(e.target.value)} required /></label>

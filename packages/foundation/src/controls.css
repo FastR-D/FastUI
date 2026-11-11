@@ -2,10 +2,11 @@
 .fastui-button, .fastui-input, .fastui-textarea, .fastui-select {
   box-sizing: border-box;
   font-family: var(--fastui-font);
-  font-size: 13px;
+  font-size: var(--fastui-font-size);
+  font-weight: var(--fastui-font-weight);
   line-height: 1.5;
   min-height: var(--fastui-height-md);
-  padding: 7px 10px;
+  padding: 3px 6px;
   border: 1px solid var(--fastui-border-strong);
   border-radius: var(--fastui-radius-control);
   background: var(--fastui-surface);
@@ -14,10 +15,11 @@
   min-width: 0;
   color-scheme: var(--fastui-color-scheme);
 }
-.fastui-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-weight: 500; text-decoration: none; }
-.fastui-button--sm, .fastui-input--sm, .fastui-select--sm { min-height: var(--fastui-height-sm); padding: 4px 8px; font-size: 12px; }
+.fastui-button { transition: background-color var(--fastui-duration-fast) var(--fastui-ease), color var(--fastui-duration-fast) var(--fastui-ease); display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-weight: 600; text-decoration: none; }
+.fastui-button--sm, .fastui-input--sm, .fastui-select--sm { min-height: var(--fastui-height-sm); padding: 2px 8px; font-size: 12px; }
 .fastui-button--xs, .fastui-input--xs, .fastui-select--xs { min-height: var(--fastui-height-xs); padding: 1px 6px; font-size: 12px; }
-.fastui-button:hover:not(:disabled) { background: var(--fastui-selected); }
+.fastui-button { padding-inline: 11px; background: var(--fastui-raised); border-color: transparent; }
+.fastui-button:hover:not(:disabled) { background: var(--fastui-secondary-hover); }
 .fastui-button--primary { background: var(--fastui-primary); border-color: var(--fastui-primary); color: var(--fastui-on-primary); }
 .fastui-button--primary:hover:not(:disabled) { background: var(--fastui-primary-hover); }
 .fastui-button--danger { background: var(--fastui-danger-fill); border-color: var(--fastui-danger-fill); color: var(--fastui-on-primary); }
@@ -25,14 +27,14 @@
 .fastui-button--quiet, .fastui-button--icon, .fastui-button--navigation { background: transparent; border-color: transparent; }
 .fastui-button--icon { aspect-ratio: 1; padding: 5px; }
 .fastui-button--navigation { border-radius: 0; }
-.fastui-button[aria-pressed=true], .fastui-button[aria-selected=true] { box-shadow: inset 0 -2px var(--fastui-focus); }
-.fastui-button:disabled, .fastui-input:disabled, .fastui-textarea:disabled, .fastui-select:disabled { opacity: .6; cursor: not-allowed; }
+.fastui-button[aria-pressed=true], .fastui-button[aria-selected=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
+.fastui-button:disabled, .fastui-input:disabled, .fastui-textarea:disabled, .fastui-select:disabled { opacity: var(--fastui-disabled-opacity); cursor: not-allowed; }
 .fastui-button:focus-visible, .fastui-input:focus-visible, .fastui-textarea:focus-visible, .fastui-select:focus-visible, .fastui-link:focus-visible, .fastui-disclosure-trigger:focus-visible { outline: 2px solid var(--fastui-focus); outline-offset: 2px; }
 .fastui-input::placeholder, .fastui-textarea::placeholder { color: var(--fastui-muted); }
 .fastui-input[aria-invalid=true], .fastui-textarea[aria-invalid=true] { border-color: var(--fastui-danger); }
 .fastui-input[type=checkbox], .fastui-input[type=radio], .fastui-input[type=range] { min-height: auto; padding: 0; accent-color: var(--fastui-primary); }
 .fastui-textarea { resize: vertical; }
-.fastui-field { display: grid; gap: 6px; color: var(--fastui-secondary); font: 13px/1.5 var(--fastui-font); }
+.fastui-field { display: grid; gap: 6px; color: var(--fastui-secondary); font: var(--fastui-font-weight) 13px/1.5 var(--fastui-font); }
 .fastui-fieldset { border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); min-width: 0; padding: 16px; }
 .fastui-legend { color: var(--fastui-secondary); padding: 0 4px; }
 .fastui-heading { color: var(--fastui-text); font-weight: 600; }
@@ -42,7 +44,7 @@
 .fastui-table :where(th, td) { padding: 12px; border-bottom: 1px solid var(--fastui-border); }
 .fastui-table th { background: var(--fastui-raised); font-weight: 600; }
 .fastui-disclosure-trigger { padding: 5px 8px; cursor: pointer; }
-.fastui-dialog { box-sizing: border-box; width: min(620px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); font: 14px/1.5 var(--fastui-font); box-shadow: 0 16px 48px #0004; }
+.fastui-dialog { box-sizing: border-box; width: min(620px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-overlay); background: var(--fastui-surface); color: var(--fastui-text); font: var(--fastui-font-weight) 14px/1.5 var(--fastui-font); box-shadow: 0 16px 48px #0004; }
 .fastui-dialog--lg { width: min(880px, calc(100% - 32px)); }
 .fastui-dialog--xl { width: min(1100px, calc(100% - 32px)); }
 .fastui-dialog::backdrop { background: var(--fastui-overlay); }
@@ -59,3 +61,43 @@
 .fastui-empty { padding: 24px; text-align: center; }
 .fastui-empty > h2 { font-size: 16px; }
 .fastui-loading { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Workbench chrome: flat surfaces, a top selection marker and visible focus. */
+.fastui-toolbar, .fastui-statusbar { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; font: var(--fastui-font-weight) var(--fastui-font-size)/1.5 var(--fastui-font); color: var(--fastui-secondary); }
+.fastui-toolbar { padding: 8px 12px; border-bottom: 1px solid var(--fastui-border); }
+.fastui-statusbar { padding: 4px 10px; border-top: 1px solid var(--fastui-border); background: var(--fastui-chrome); }
+.fastui-divider { border: 0; border-top: 1px solid var(--fastui-border); margin: 12px 0; }
+.fastui-section { min-width: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); }
+.fastui-section > header { padding: 10px 12px; border-bottom: 1px solid var(--fastui-border); }
+.fastui-list-row { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 10px 12px; border-bottom: 1px solid var(--fastui-border); color: var(--fastui-text); font: var(--fastui-font-weight) 13px/1.5 var(--fastui-font); text-decoration: none; }
+.fastui-list-row:hover { background: var(--fastui-hover); }
+.fastui-list-row[aria-current], .fastui-list-row[aria-selected=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
+.fastui-tabs { display: flex; align-items: stretch; overflow-x: auto; min-width: 0; background: var(--fastui-chrome); border-bottom: 1px solid var(--fastui-border); }
+.fastui-tab-item { display: inline-flex; flex: 0 0 auto; align-items: center; max-width: 300px; height: var(--fastui-tab-height); border-top: 2px solid transparent; }
+.fastui-tabs--closable .fastui-tab-item { height: 34px; border-right: 1px solid var(--fastui-border); }
+.fastui-tab-item:has([aria-selected=true]) { border-top-color: var(--fastui-focus); background: var(--fastui-surface); }
+.fastui-tab, .fastui-tab-close, .fastui-segment { font: var(--fastui-font-weight) var(--fastui-font-size)/1.5 var(--fastui-font); color: var(--fastui-muted); border: 0; background: transparent; cursor: pointer; }
+.fastui-tab { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; height: 100%; padding: 0 12px; white-space: nowrap; border-radius: 0; }
+.fastui-tab-label { overflow: hidden; text-overflow: ellipsis; }
+.fastui-tab[aria-selected=true] { color: var(--fastui-text); }
+.fastui-tab:hover, .fastui-tab-close:hover { background: var(--fastui-hover); }
+.fastui-tab:disabled, .fastui-segment:disabled { cursor: not-allowed; opacity: var(--fastui-disabled-opacity); }
+.fastui-tab:focus-visible, .fastui-tab-close:focus-visible, .fastui-segment:focus-visible, .fastui-list-row:focus-visible { outline: 1px solid var(--fastui-focus); outline-offset: -2px; box-shadow: none; }
+.fastui-tab--preview { font-style: italic; }
+.fastui-tab-dirty { display: inline-block; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--fastui-muted); }
+.fastui-tab-close { flex: 0 0 20px; width: 20px; height: 20px; margin-right: 4px; padding: 0; }
+.fastui-segments { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-control); background: var(--fastui-chrome); }
+.fastui-segment { min-height: var(--fastui-height-sm); padding: 2px 10px; border-radius: 2px; color: var(--fastui-secondary); }
+.fastui-segment:hover:not(:disabled) { background: var(--fastui-hover); }
+.fastui-segment[aria-pressed=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
+.fastui-spinner { display: inline-block; box-sizing: border-box; width: 14px; height: 14px; flex-shrink: 0; border: 2px solid var(--fastui-border-strong); border-top-color: var(--fastui-focus); border-radius: 50%; animation: fastui-spin 800ms linear infinite; }
+@keyframes fastui-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .fastui-button { transition: none; }
+  .fastui-spinner { animation: none; }
+}
+@media (forced-colors: active) {
+  .fastui-tab-item:has([aria-selected=true]) { border-top-color: Highlight; }
+  .fastui-segment[aria-pressed=true] { outline: 1px solid Highlight; }
+  .fastui-tab-dirty { background: CanvasText; }
+}

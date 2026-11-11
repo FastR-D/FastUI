@@ -1,0 +1,56 @@
+{
+  "recorded_date": "2026-11-10",
+  "clone_depth": 1,
+  "repositories": [
+    {
+      "name": "assistant-ui",
+      "url": "https://github.com/assistant-ui/assistant-ui.git",
+      "branch": "main",
+      "commit": "f92028b466cba721846de6851e4dddb6c04ecfad",
+      "shallow": true,
+      "commit_count": 1,
+      "license_file": "LICENSE",
+      "license": "MIT"
+    },
+    {
+      "name": "ui-ux-pro-max-skill",
+      "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git",
+      "branch": "main",
+      "commit": "6ae86f61f520d6ca229d2f40e070410638c908c5",
+      "shallow": true,
+      "commit_count": 1,
+      "license_file": "LICENSE",
+      "license": "MIT"
+    },
+    {
+      "name": "ayakaleaf-pro",
+      "url": "https://github.com/ayaka-notes/ayakaleaf-pro.git",
+      "branch": "server-pro",
+      "commit": "6ce22039d19b516354dff2a8508dd67515ded9f0",
+      "shallow": true,
+      "commit_count": 1,
+      "license_file": "LICENSE",
+      "license": "AGPL-3.0"
+    },
+    {
+      "name": "shadcn-ui",
+      "url": "https://github.com/shadcn-ui/ui.git",
+      "branch": "main",
+      "commit": "8ab27715521cbd4f87ae6886cd989cbb678f6de7",
+      "shallow": true,
+      "commit_count": 1,
+      "license_file": "LICENSE.md",
+      "license": "MIT"
+    },
+    {
+      "name": "radix-primitives",
+      "url": "https://github.com/radix-ui/primitives.git",
+      "branch": "main",
+      "commit": "eb3a2b7091293e27df8f9ba906632d8daa3d81a3",
+      "shallow": true,
+      "commit_count": 1,
+      "license_file": "LICENSE",
+      "license": "MIT"
+    }
+  ]
+}

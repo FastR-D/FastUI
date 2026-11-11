@@ -22,10 +22,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
       - name: Verify source, exact tag versions and official lock URLs
         run: |
           git fetch origin main:refs/remotes/origin/main "${GITHUB_REF}:${GITHUB_REF}"
@@ -33,14 +35,13 @@ jobs:
           npm --version
           node --input-type=module -e "import {execFileSync} from 'node:child_process'; const [major,minor,patch]=execFileSync('npm',['--version'],{encoding:'utf8'}).trim().split('.').map(Number); if(major<11||(major===11&&(minor<5||(minor===5&&patch<1)))) throw new Error('OIDC requires npm >=11.5.1')"
           node scripts/publish.mjs --check-source
-      - run: npm ci --registry=https://registry.npmjs.org
-      - run: npx --no-install playwright install --with-deps chromium
+      - run: pnpm exec playwright install --with-deps chromium
       - name: Build and verify original packed candidates
-        run: npm run verify
+        run: pnpm verify
       - name: Check publication entry against controlled Git and registry boundaries
         run: node --experimental-vm-modules --test scripts/publish.test.mjs
       - name: Publish foundation then framework packages using OIDC
-        run: npm run publish:tag
+        run: pnpm publish:tag
       - uses: actions/upload-artifact@v4
         if: always()
         with:

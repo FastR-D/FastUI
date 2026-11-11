@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WorkbenchCases from './WorkbenchCases.vue'
 import { ref } from 'vue'
 import { Button, TextField, TextArea, Modal, ModalBody, Select, Box, Heading, Field, Link, SelectField, SelectOption } from '@fastrd/ui-vue'
 const name = ref('')
@@ -16,6 +17,7 @@ const options = [{ value: 'pdf', label: 'PDF' }, { value: 'svg', label: 'SVG' },
 </script>
 <template>
   <main class="workbench">
+    <WorkbenchCases />
     <Heading>Document settings</Heading>
     <p>Configure the output before saving your document.</p>
     <form @submit.prevent="saved++">
@@ -35,7 +37,7 @@ const options = [{ value: 'pdf', label: 'PDF' }, { value: 'svg', label: 'SVG' },
       <output data-testid="saved">{{ saved }}</output>
     </form>
     <Box data-testid="preview"><input aria-label="Preview input"><p>Preview content stays native.</p></Box>
-    <Box class="fastui-mdui fastui-vscrui" data-testid="mappings" />
+    <Box class="fastui-mdui" data-testid="mappings" />
     <Modal :open="open" label="Settings" @close="open=false">
       <ModalBody><Heading>Settings</Heading><TextField aria-label="Dialog name" autofocus /><Link href="#details">Details</Link><Button @click="nested=true">Open nested</Button><Button @click="open=false">Close settings</Button></ModalBody>
       <Modal :open="nested" label="Nested settings" @close="nested=false"><ModalBody><Button @click="nested=false">Close nested</Button></ModalBody></Modal>

@@ -109,5 +109,7 @@ export function EmptyState({ title, action, children, className, ...props }: Emp
   return <div {...props} className={classes('fastui-empty', className)}><h2>{title}</h2>{children}{action}</div>
 }
 export function Loading({ label = 'Loading', className, ...props }: HTMLAttributes<HTMLSpanElement> & { label?: string }) {
-  return <span {...props} role="status" className={classes('fastui-loading', className)}>{label}</span>
+  return <span {...props} role="status" className={classes('fastui-loading', className)}><span className="fastui-spinner" aria-hidden="true" />{label}</span>
 }
+
+export * from './workbench.js'

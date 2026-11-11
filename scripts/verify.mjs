@@ -4,14 +4,15 @@ import { resolve, join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { createServer, preview } from 'vite'
 import { chromium } from '@playwright/test'
+import { runWorkbenchScenarios } from '../tests/workbench.mjs'
 import { runScenarios } from '../tests/browser.mjs'
 import { runDialogRegressions } from '../tests/dialog-regressions.mjs'
 import { releaseFixture } from '../tests/release-fixture.mjs'
 import './check-registry.mjs'
 
 const root = process.cwd()
-const npm = process.env.npm_execpath
-if (!npm) throw new Error('Run through npm run verify so the current npm CLI can be reused.')
+const pnpm = process.env.npm_execpath
+if (!pnpm?.includes('pnpm')) throw new Error('Run through pnpm verify.')
 const foundationManifest = JSON.parse(await readFile(resolve('packages/foundation/package.json'), 'utf8'))
 const version = foundationManifest.version
 const artifacts = resolve('artifacts', version)
@@ -22,10 +23,10 @@ await mkdir(work, { recursive: true })
 const packedDirectory = join(work, 'packed')
 await mkdir(packedDirectory)
 const run = (args, cwd) => {
-  const result = spawnSync(process.execPath, [npm, ...args], { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 })
+  const result = args[0] === 'pack' ? spawnSync('npm', args, { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 }) : spawnSync(process.execPath, [pnpm, ...(cwd === root ? [] : ['--ignore-workspace']), ...args], { cwd, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 })
   if (args[0] !== 'pack') process.stdout.write(result.stdout ?? '')
   process.stderr.write(result.stderr ?? '')
-  if (result.status !== 0) throw new Error(`npm ${args.join(' ')} failed in ${cwd}`)
+  if (result.status !== 0) throw new Error(`package command ${args.join(' ')} failed in ${cwd}`)
   return result.stdout
 }
 run(['run', 'build'], root)
@@ -67,8 +68,8 @@ const devServers = []
 let browser
 const fixture = await releaseFixture(publicPackages.map(pkg => join(artifacts, pkg.file)))
 const install = directory => new Promise((resolve, reject) => {
-  const child = spawn(process.execPath, [npm, 'install', '--include=dev', '--no-audit', '--no-fund', '--cache', join(directory, '.npm-cache')], {
-    cwd: directory, env: { ...process.env, ...fixture.environment }, stdio: ['ignore', 'pipe', 'pipe'],
+  const child = spawn(process.execPath, [pnpm, 'install', '--ignore-workspace', '--no-frozen-lockfile', '--store-dir', join(directory, '.pnpm-store')], {
+    cwd: directory, env: { ...process.env, ...fixture.environment, npm_config_manage_package_manager_versions: 'false', npm_config_verify_deps_before_run: 'false' }, stdio: ['ignore', 'pipe', 'pipe'],
   })
   let output = ''
   child.stdout.on('data', data => { output += data; process.stdout.write(data) })
@@ -88,14 +89,15 @@ try {
       Object.assign(manifest.devDependencies, { '@types/react': '~18.3.0', '@types/react-dom': '~18.3.0' })
       await writeFile(path, JSON.stringify(manifest, null, 2) + '\n')
     }
-    // An isolated cache forces registry resolution and original candidate downloads.
+    // An isolated pnpm store forces registry resolution and original candidate downloads.
     const installLog = await install(directory)
     const installed = JSON.parse(await readFile(join(directory, 'node_modules/@fastrd/ui-foundation/package.json'), 'utf8'))
     if (installed.version !== foundationManifest.version) throw new Error('Installed foundation version differs')
     for (const dependency of ['vite', ...(name === 'html' ? [] : ['typescript'])]) {
       await readFile(join(directory, 'node_modules', dependency, 'package.json'))
     }
-    const tree = run(['ls', '@fastrd/ui-foundation', '--json'], directory)
+    const tree = run(['list', '@fastrd/ui-foundation', '--json'], directory)
+    if (JSON.parse(tree)[0]?.dependencies?.['@fastrd/ui-foundation']?.version !== version) throw new Error('Isolated pnpm dependency tree differs')
     const build = run(['run', 'build'], directory)
     execFileSync(process.execPath, ['--input-type=module', '-e', `import('@fastrd/ui-foundation').then(module => { if (typeof module.initColorMode !== 'function') throw new Error('Missing SSR-safe export') })`], { cwd: directory, stdio: 'inherit' })
     await writeFile(join(artifacts, `${name}-build.log`), installLog + build + tree)
@@ -111,10 +113,10 @@ try {
       [pkg.name, pkg.version])),
   }, null, 2) + '\n')
   const bootstrapInstall = await install(bootstrap)
-  const bootstrapTree = run(['ls', '@fastrd/ui-foundation', '--json'], bootstrap)
+  const bootstrapTree = run(['list', '@fastrd/ui-foundation', '--depth', 'Infinity', '--json'], bootstrap)
   await writeFile(join(artifacts, 'bootstrap-install.log'), bootstrapInstall + bootstrapTree)
   await writeFile(join(artifacts, 'bootstrap-result.json'), JSON.stringify({ status: 'passed',
-    authority: 'npm install/npm ls against candidate registry fixture with public npm passthrough; publication pending',
+    authority: 'pnpm install/pnpm list against candidate registry fixture with public npm passthrough; publication pending',
     foundationExplicitlyInstalled: false, packages: publicPackages, tree: JSON.parse(bootstrapTree),
   }, null, 2) + '\n')
   // StrictMode ref/effect replay is a development behavior. These servers still
@@ -127,7 +129,7 @@ try {
     urls[`${framework}-dev`] = `http://127.0.0.1:${server.httpServer.address().port}`
   }
   browser = await chromium.launch({ headless: true })
-  const scenarios = [...await runDialogRegressions(browser, urls, artifacts), ...await runScenarios(browser, urls, artifacts)]
+  const scenarios = [...await runWorkbenchScenarios(browser, urls), ...await runDialogRegressions(browser, urls, artifacts), ...await runScenarios(browser, urls, artifacts)]
   for (const pkg of publicPackages) {
     const downloads = fixture.requests.filter(request => request.kind === 'tarball' && request.name === pkg.name)
     const expected = pkg.name === foundationManifest.name ? 5 : pkg.name === '@fastrd/ui-react' ? 3 : 2

@@ -4,9 +4,11 @@ The entry point is clean Vue/React/HTML applications installed from tarballs and
 from their production Vite 6 builds. No source aliases or internal mocks.
 The final GitHub release URLs are served at the external HTTPS download boundary
 by a local fixture until upload. Package and example manifests stay unchanged;
-each consumer uses a fresh npm cache and explicitly installs dev dependencies.
+each consumer uses a fresh pnpm store and explicitly installs dev dependencies.
 The React example also builds with pinned React/ReactDOM 18.3.1 and matching
 18.3 types; Vue/React type checks run with skipLibCheck=false.
+
+The root and isolated consumer installs use pnpm; npm CLI only packs candidates.
 
 Failure modes to exercise before acceptance:
 
@@ -33,8 +35,12 @@ Failure modes to exercise before acceptance:
   is ignored, denied storage throws, dispose retains a listener, SSR import
   touches browser globals, bootstrap runs after content, scoped tokens escape.
 - Appearance: global control/reset pollutes preview inputs, deep nested themes
-  fail to map MDUI/vscrui, light/dark unreadable, narrow viewport overflow.
+  fail to map MDUI, light/dark unreadable, narrow viewport overflow.
 
 The verifier writes a sorted scenario manifest, production build logs and
 light/dark viewport screenshots under artifacts. Screenshots are review evidence,
 not automatically approved golden images.
+
+Workbench regressions cover React 18/19 and Vue: automatic tab activation,
+wraparound, Home/End, disabled skipping, RTL, 6px unsaved marker, flat styling,
+close focus restoration, empty state, and controlled segmented status.

@@ -71,3 +71,15 @@ export function syncDialog(element: HTMLDialogElement, open: boolean): void {
   }
   else if (!open && element.open) element.close()
 }
+
+/** Shared automatic-activation tab navigation; skips disabled items and supports RTL. */
+export function tabNavigationIndex(key: string, current: number, items: readonly { disabled?: boolean }[], rtl = false): number {
+  const enabled = items.map((item, index) => item.disabled ? -1 : index).filter(index => index >= 0)
+  if (!enabled.length) return -1
+  if (key === 'Home') return enabled[0]
+  if (key === 'End') return enabled[enabled.length - 1]
+  if (key !== 'ArrowLeft' && key !== 'ArrowRight') return -1
+  const direction = (key === 'ArrowRight' ? 1 : -1) * (rtl ? -1 : 1)
+  const position = enabled.indexOf(current)
+  return enabled[(position + direction + enabled.length) % enabled.length]
+}

@@ -1,3 +1,4 @@
+import { parse } from 'yaml'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
@@ -32,7 +33,7 @@ async function scenario(options = {}) {
   const records = structuredClone(packages)
   options.packages?.(records)
   const bytes = Buffer.from(JSON.stringify(records))
-  const results = { status: 'passed', scenarios: Array.from({ length: 53 }, (_, i) => `scenario-${i}`), packagesSha256: sha(bytes) }
+  const results = { status: 'passed', scenarios: Array.from({ length: 62 }, (_, i) => `scenario-${i}`), packagesSha256: sha(bytes) }
   options.results?.(results)
   const context = createContext({ Buffer, URL, AbortSignal: { timeout: timeoutMs => ({ timeoutMs, expiresAt: clock + timeoutMs }) }, process: { env, argv: ['node', 'scripts/publish.mjs'], execPath: process.execPath },
     console: { log: (...args) => events.push(['log', args.join(' ')]) },
@@ -73,10 +74,11 @@ async function scenario(options = {}) {
       if (path === `${directory}/packages.json`) return bytes
       if (path === `${directory}/results.json`) return JSON.stringify(results)
       const value = await readFile(path, encoding)
-      if (options.mirrorLock && path === 'package-lock.json') return value.replaceAll('https://registry.npmjs.org', 'https://mirror.invalid')
+      if (options.mirrorLock && path === 'pnpm-lock.yaml') return value.replaceAll('https://registry.npmjs.org', 'https://mirror.invalid')
       return value
     } },
     'node:crypto': { createHash },
+    'yaml': { parse },
     'node:perf_hooks': { performance: { now: () => clock } },
     'node:timers/promises': { setTimeout: async ms => {
       events.push(['delay', ms])
@@ -97,10 +99,9 @@ async function scenario(options = {}) {
       },
       spawnSync: (command, args) => {
         if (command === 'git') return { status: options.offMain ? 1 : 0 }
-        assert.equal(command, process.execPath)
-        assert.equal(args[0], 'fixture-npm')
-        assert.equal(args[1], 'publish')
-        const pkg = packages.find(pkg => args[2].endsWith(pkg.file))
+        assert.equal(command, 'npm')
+        assert.equal(args[0], 'publish')
+        const pkg = packages.find(pkg => args[1].endsWith(pkg.file))
         events.push(['publish', pkg.name])
         uploaded.add(pkg.name)
         uploadedAt.set(pkg.name, clock)
@@ -261,8 +262,8 @@ const rejections = [
   ['unknown package', { packages: rows => { rows[2].name = '@other/unknown' } }, /Unexpected verified/, 0],
   ['wrong package filename', { packages: rows => { rows[0].file = '../other.tgz' } }, /Unexpected verified/, 0],
   ['wrong verified digest', { packages: rows => { rows[0].sha256 = '0'.repeat(64) } }, /SHA-256 differs/, 0],
-  ['unbound results', { results: result => { result.packagesSha256 = '0'.repeat(64) } }, /53-scenario verification/, 0],
-  ['failed verification', { results: result => { result.status = 'failed' } }, /53-scenario verification/, 0],
+  ['unbound results', { results: result => { result.packagesSha256 = '0'.repeat(64) } }, /62-scenario verification/, 0],
+  ['failed verification', { results: result => { result.status = 'failed' } }, /62-scenario verification/, 0],
   ['wrong packed name', { packed: manifest => { manifest.name = '@other/pkg' } }, /Packed manifest/, 0],
   ['wrong packed version', { packed: manifest => { manifest.version = '9.9.9' } }, /Packed manifest/, 0],
   ['wrong packed repository', { packed: manifest => { manifest.repository.url = 'git+https://other.invalid/x.git' } }, /Packed manifest/, 0],

@@ -1,6 +1,6 @@
 # @fastrd/ui-vue
 
-MIT · 0.1.2 · Vue ^3.5 peer · exact foundation 0.1.2 registry dependency.
+MIT · 0.2.0 · Vue ^3.5 peer · exact foundation 0.2.0 registry dependency.
 
 ```vue
 <script setup>
@@ -49,3 +49,31 @@ modal behavior replaces the original custom focus trap.
 
 Class names use fastui-*; no legacy fp-* aliases or application brands are
 included. Application layouts and preview styles stay with the host.
+
+
+## Workbench components
+
+`TabBar`: `tabs`, `activeId`, accessible `label`, `onSelect` (Vue `@select`),
+optional `onClose` (Vue `@close`), `closeLabel(tab)` and `dirtyLabel`.
+Each TabItem has a unique DOM `id`, string `label`, optional `controls`,
+`disabled`, `dirty`, `preview`. Host panels use `role="tabpanel"`, `id=controls`
+and `aria-labelledby=activeId`; host owns visibility and active selection after
+close. Automatic activation uses Left/Right, Home/End, RTL and disabled skipping.
+Closing restores focus to the remaining tabbable tab. Empty/all-disabled lists
+have no tabbable tab. Use unique ids across every instance.
+
+`SegmentedControl`: `options` ({value,label,disabled?}), `value`, `label`,
+`onChange` (Vue `@change`). A controlled mutually exclusive pressed-button group;
+uses normal Tab order, not radio semantics.
+
+`Toolbar` requires `label`; it groups mixed actions/fields with native Tab order.
+`StatusBar` defaults role=status. `Section`, `ListRow`, `Divider` provide surfaces,
+row separators and structure. ListRow is a noninteractive div by default; the
+host owns selection, links, data, search and sorting.
+
+Compact control sizes xs/sm/md are 24/25/28px. Typography uses the FastWrite
+Plex/Noto stack with system fallback; fonts are loaded by the host, not the package.
+
+`Alert` and `Badge`: tone info/success/warning/danger. Alert defaults role=status,
+or alert for danger. `Loading` exposes a status region and label (default Loading).
+`EmptyState` takes title, default content and an optional `#action` slot.

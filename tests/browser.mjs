@@ -124,14 +124,14 @@ export async function runScenarios(browser, urls, artifacts) {
       const mappings = page.getByTestId('mappings')
       for (const [mode, primary, channels] of [['light', '#155fb8', '21, 95, 184'], ['dark', '#0e639c', '14, 99, 156']]) {
         await page.evaluate(mode => window.theme.setMode(mode), mode)
-        expect(await mappings.evaluate(node => getComputedStyle(node).getPropertyValue('--vscode-button-background').trim())).toBe(primary)
+        expect(await mappings.evaluate(node => getComputedStyle(node).getPropertyValue('--fastui-primary').trim())).toBe(primary)
         expect(await mappings.evaluate(node => getComputedStyle(node).getPropertyValue('--mdui-color-primary').trim())).toBe(channels)
       }
       // A local light integration nested below a dark app must resolve locally.
       await mappings.evaluate(node => { node.dataset.fastuiTheme = 'light' })
       expect(await mappings.evaluate(node => getComputedStyle(node).getPropertyValue('--mdui-color-primary').trim())).toBe('21, 95, 184')
       expect(await page.getByTestId('preview').evaluate(node => getComputedStyle(node).getPropertyValue('--vscode-button-background'))).toBe('')
-      passed.push('foundation:scoped-mdui-rgb-and-vscrui-mappings')
+      passed.push('foundation:scoped-mdui-rgb-mappings')
     }
     expect(errors).toEqual([])
     await context.close()

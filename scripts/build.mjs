@@ -20,6 +20,5 @@ for (const name of ['foundation', 'vue', 'react']) {
 await writeFile('packages/foundation/dist/tokens.css', `/* Generated from tokens.json. */\n:root {\n${declarations(tokens.shared)}\n}\n` + ['light', 'dark'].map(mode => `${mode === 'light' ? ':root, ' : ''}[data-fastui-theme="${mode}"] {\n${declarations(tokens[mode])}\n  --fastui-color-scheme: ${mode};\n}`).join('\n'))
 await cp('packages/foundation/src/controls.css', 'packages/foundation/dist/controls.css')
 await writeFile('packages/foundation/dist/mdui.css', '/* Generated, opt-in mappings. */\n.fastui-mdui {\n' + Object.entries(tokens.mdui).map(([key, source]) => `  --mdui-color-${key}: var(--fastui-${source}-rgb);`).join('\n') + '\n}\n')
-await writeFile('packages/foundation/dist/vscrui.css', '.fastui-vscrui {\n' + Object.entries(tokens.vscrui).map(([key, source]) => `  --vscode-${key}: var(--fastui-${source});`).join('\n') + '\n}\n')
 for (const name of ['vue', 'react']) await writeFile(`packages/${name}/dist/styles.css`, '@import "@fastrd/ui-foundation/tokens.css";\n@import "@fastrd/ui-foundation/controls.css";\n')
 await build({ entryPoints: ['packages/foundation/src/bootstrap.ts'], outfile: 'packages/foundation/dist/color-mode.js', bundle: true, format: 'iife', target: 'es2022' })

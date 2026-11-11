@@ -1,19 +1,35 @@
 {
   "name": "@fastrd/ui-foundation",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Scoped design tokens, native controls and color mode for FastUI",
   "type": "module",
   "license": "MIT",
-  "repository": {"type":"git","url":"git+https://github.com/FastR-D/FastUI.git","directory":"packages/foundation"},
-  "publishConfig": {"access":"public"},
-  "files": ["dist", "tokens.json", "LICENSE", "README.md", "NOTICE.md"],
-  "sideEffects": ["**/*.css"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FastR-D/FastUI.git",
+    "directory": "packages/foundation"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "tokens.json",
+    "LICENSE",
+    "README.md",
+    "NOTICE.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
-    ".": {"types":"./dist/index.d.ts","import":"./dist/index.js"},
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
     "./tokens.css": "./dist/tokens.css",
     "./controls.css": "./dist/controls.css",
     "./mdui.css": "./dist/mdui.css",
-    "./vscrui.css": "./dist/vscrui.css",
     "./tokens.json": "./tokens.json",
     "./color-mode.js": "./dist/color-mode.js"
   }

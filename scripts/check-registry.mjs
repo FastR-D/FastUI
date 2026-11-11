@@ -1,12 +1,14 @@
 import { readFile } from 'node:fs/promises'
+import { parse } from 'yaml'
 
-const lock = JSON.parse(await readFile('package-lock.json', 'utf8'))
+const lock = parse(await readFile('pnpm-lock.yaml', 'utf8'))
 let remote = 0
-for (const [path, pkg] of Object.entries(lock.packages)) {
-  if (!path.includes('node_modules/') || pkg.link) continue
-  if (!pkg.resolved || new URL(pkg.resolved).origin !== 'https://registry.npmjs.org') {
-    throw new Error(`Lock dependency must resolve from official npm: ${path}`)
+for (const [name, pkg] of Object.entries(lock.packages ?? {})) {
+  const resolution = pkg.resolution
+  if (!resolution?.integrity || !resolution?.tarball || new URL(resolution.tarball).origin !== 'https://registry.npmjs.org') {
+    throw new Error(`Lock dependency must resolve from official npm with integrity: ${name}`)
   }
   remote++
 }
-console.log(`Official npm lock sources verified: ${remote}`)
+if (!remote) throw new Error('pnpm lock must contain registry packages')
+console.log(`Official npm pnpm lock sources verified: ${remote}`)

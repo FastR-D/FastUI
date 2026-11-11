@@ -123,3 +123,11 @@ export const RichText: FunctionalComponent<HTMLAttributes & { html: string }> = 
   h('div', mergeProps(attrs, { innerHTML: props.html }))
 RichText.props = ['html']
 RichText.inheritAttrs = false
+
+export const Section = element('Section', 'section', 'fastui-section')
+export const StatusBar: FunctionalComponent<ElementProps> = (props, { attrs, slots }) =>
+  h(props.as ?? 'div', mergeProps({ role: 'status' }, attrs, { class: 'fastui-statusbar' }), slots.default?.())
+StatusBar.props = ['as']
+StatusBar.inheritAttrs = false
+export const Divider = element('Divider', 'hr', 'fastui-divider')
+export const ListRow = element('ListRow', 'div', 'fastui-list-row')

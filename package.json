@@ -2,22 +2,38 @@
   "name": "fastui",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*"],
   "scripts": {
     "build": "node scripts/build.mjs",
     "verify": "node scripts/verify.mjs",
-    "publish:tag": "node scripts/publish.mjs"
+    "publish:tag": "node scripts/publish.mjs",
+    "docs:dev": "pnpm build && vite --config docs/vite.config.ts",
+    "docs:build": "pnpm build && tsc -p docs/tsconfig.json && vite build --config docs/vite.config.ts",
+    "docs:preview": "vite preview --config docs/vite.config.ts",
+    "docs:test": "node tests/docs.mjs",
+    "test:release": "node --experimental-vm-modules --test scripts/publish.test.mjs"
   },
   "devDependencies": {
+    "@fastrd/ui-foundation": "workspace:*",
+    "@fastrd/ui-react": "workspace:*",
+    "@fastrd/ui-vue": "workspace:*",
+    "@fontsource-variable/ibm-plex-sans": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/noto-sans-sc": "5.3.1",
     "@playwright/test": "^1.56.1",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "esbuild": "^0.25.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "typescript": "~5.7.3",
     "vite": "~6.4.1",
     "vue": "^3.5.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "yaml": "^2.8.1"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
   }
 }

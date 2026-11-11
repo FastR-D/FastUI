@@ -1,6 +1,6 @@
 # @fastrd/ui-foundation
 
-MIT · 0.1.2 · Framework-independent ESM, types and explicitly imported CSS.
+MIT · 0.2.0 · Framework-independent ESM, types and explicitly imported CSS.
 
 ```js
 import { initColorMode } from '@fastrd/ui-foundation'
@@ -11,26 +11,31 @@ theme.setMode('system') // light | dark | system
 // theme.subscribe(({ mode, resolved }) => ...); theme.dispose() on teardown
 ```
 
-Call synchronously before mounting content. `target` optionally scopes the theme
-to an HTMLElement; it defaults to document.documentElement. Storage denial is
-handled in memory. Changes follow the OS in system mode and synchronize across
-same-origin tabs. `data-fastui-theme` is the only DOM attribute owned by this API.
-Imports are SSR-safe; initialization requires a browser.
+Call synchronously before mounting content. Optional `target` scopes the theme
+(default document.documentElement). Storage denial is handled in memory; system
+mode follows the OS and same-origin tabs synchronize. Only `data-fastui-theme`
+is owned by this API. Imports are SSR-safe; initialization requires a browser.
 
-tokens.json is the single editable source for light/dark colors, dimensions,
-MDUI RGB channel mappings and vscrui aliases. `tokens.css` only defines variables;
-`controls.css` only styles explicitly marked `.fastui-*` controls. No body/app
-reset, inherited font reset or descendant native-input selector. Put
-`.fastui-button`, `.fastui-input`, `.fastui-textarea`, `.fastui-select` on individual
-HTML controls. Variant and size classes use `--primary` / `--sm`, etc.
+`tokens.json` is the source for semantic colors, typography, compact dimensions,
+motion and opt-in MDUI RGB mappings. `tokens.css` only defines variables;
+`controls.css` only styles explicit `.fastui-*` classes. No app or native-input
+reset. Framework controls, workbench chrome and HTML controls share these styles.
 
-Import `mdui.css` or `vscrui.css` explicitly and mark only their integration root
-`.fastui-mdui` / `.fastui-vscrui`. Do not mark an editor subtree for mappings
-unless the editor is intentionally meant to consume those variables.
-Native dialog enters the top layer without leaving its theme scope.
+The default font stack is IBM Plex Sans Variable / Noto Sans SC Variable, with
+system fallbacks. Hosts load fonts themselves or set `--fastui-font` to
+`var(--fastui-font-system)`. Heights xs/sm/md are 24/25/28px; comfortable is 32px.
+Reduced-motion disables transitions/spinner animation. Forced colors preserves
+selected markers. Tokens are overridable within any container.
 
-For static sites copy dist/index.js, color-mode.js, tokens.css and controls.css
-from this version's package. For initialization before content is parsed, put
+`mdui.css` is optional; mark only its integration root `.fastui-mdui`.
+Use native `--fastui-*` tokens directly for custom integrations.
+
+For static sites copy dist/index.js, color-mode.js, tokens.css and controls.css.
+For initialization before parsing content, use
 `<script src="./assets/color-mode.js" data-storage-key="your-existing-key"></script>`
-in the head without async/defer. The ES module index.js also exports the controller
-for application initialization and scoped panels. No CDN or runtime framework is required.
+in the head without async/defer. Native dialog stays in its original theme scope.
+
+`tabNavigationIndex(key, index, items, rtl?)` is a framework-independent keyboard
+helper used by both component packages. It handles Left/Right, Home/End,
+wraparound and disabled items, returning -1 for unhandled keys/all-disabled lists.
+It does not manage DOM focus or panels; HTML hosts implement those behaviors.
