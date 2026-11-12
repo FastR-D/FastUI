@@ -4,12 +4,18 @@ on:
   push:
     # Historical server deployment tags must not publish language packages.
     tags: ['v*', '!v*-deploy.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing immutable version tag to retry (e.g. v0.3.0)'
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: npm-publish-${{ github.ref }}
+  group: npm-publish-${{ inputs.tag || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -19,19 +25,24 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      FASTUI_RELEASE_TAG: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
+      # checkout may peel annotated tags locally; fetching the tag again would
+      # reject its object as a clobber even though the source commit is identical.
       - name: Verify source, exact tag versions and official lock URLs
         run: |
-          git fetch origin main:refs/remotes/origin/main "${GITHUB_REF}:${GITHUB_REF}"
+          git fetch origin main:refs/remotes/origin/main
           node --version
           npm --version
           node --input-type=module -e "import {execFileSync} from 'node:child_process'; const [major,minor,patch]=execFileSync('npm',['--version'],{encoding:'utf8'}).trim().split('.').map(Number); if(major<11||(major===11&&(minor<5||(minor===5&&patch<1)))) throw new Error('OIDC requires npm >=11.5.1')"

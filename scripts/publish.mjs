@@ -21,14 +21,27 @@ if (manifests.some(manifest => manifest.version !== version || (manifest !== man
   throw new Error('All three source versions and exact internal dependencies must match')
 }
 const tag = `refs/tags/v${version}`
-if (process.env.GITHUB_REPOSITORY !== repository || process.env.GITHUB_EVENT_NAME !== 'push' || process.env.GITHUB_REF !== tag) {
-  throw new Error(`Publication requires ${repository} tag-push context at ${tag}`)
+const tagPush = process.env.GITHUB_EVENT_NAME === 'push' && process.env.GITHUB_REF === tag
+const retry = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch' && process.env.GITHUB_REF === 'refs/heads/main'
+  && process.env.FASTUI_RELEASE_TAG === `v${version}`
+if (process.env.GITHUB_REPOSITORY !== repository || (!tagPush && !retry)) {
+  throw new Error(`Publication requires ${repository} tag-push context at ${tag} or an explicit main-branch retry of that tag`)
 }
-const commit = git('rev-parse', `${tag}^{commit}`)
-if (git('rev-parse', 'HEAD') !== commit || process.env.GITHUB_SHA !== commit) throw new Error('Tag commit must equal HEAD and GITHUB_SHA')
+const tagCommit = git('rev-parse', `${tag}^{commit}`)
+const commit = git('rev-parse', 'HEAD')
+if (tagPush && (commit !== tagCommit || process.env.GITHUB_SHA !== commit)) throw new Error('Tag commit must equal HEAD and GITHUB_SHA')
+if (retry) {
+  if (commit !== process.env.GITHUB_SHA) throw new Error('Dispatch HEAD must equal GITHUB_SHA')
+  if (spawnSync('git', ['merge-base', '--is-ancestor', tagCommit, commit]).status !== 0) throw new Error('Tag commit must be an ancestor of retry HEAD')
+  // Recover release infrastructure without moving an immutable tag or changing
+  // any package/build input. All other changes require a new package version.
+  const recoveryFiles = new Set(['.github/workflows/publish.yml', 'scripts/publish.mjs', 'scripts/publish.test.mjs', 'README.md', 'RELEASING.md'])
+  const changed = git('diff', '--name-only', tagCommit, commit).split('\n').filter(Boolean)
+  if (changed.some(path => !recoveryFiles.has(path))) throw new Error('Retry changed release payload or build inputs; use a new version')
+}
 if (git('status', '--porcelain', '--untracked-files=all')) throw new Error('Refusing publication from dirty source')
-if (spawnSync('git', ['merge-base', '--is-ancestor', commit, 'refs/remotes/origin/main']).status !== 0) throw new Error('Tag commit must belong to origin/main history')
-console.log(`Release source verified: ${repository} ${tag} commit=${commit} HEAD=GITHUB_SHA; clean; ancestor of origin/main`)
+if (spawnSync('git', ['merge-base', '--is-ancestor', commit, 'refs/remotes/origin/main']).status !== 0) throw new Error('Publication commit must belong to origin/main history')
+console.log(`Release source verified: ${repository} ${tag} commit=${commit} tagCommit=${tagCommit}; clean; ancestor of origin/main; ${retry ? 'unchanged-payload retry' : 'tag push'}`)
 
 if (process.argv[2] !== '--check-source') {
   const directory = `artifacts/${version}`

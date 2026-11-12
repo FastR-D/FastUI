@@ -89,7 +89,8 @@ async function scenario(options = {}) {
       execFileSync: (command, args, config) => {
         if (command === 'git') {
           if (args[0] === 'status') return options.dirty || ''
-          if (args[0] === 'rev-parse') return args[1] === 'HEAD' && options.wrongHead ? 'b'.repeat(40) : 'a'.repeat(40)
+          if (args[0] === 'rev-parse') return args[1] === 'HEAD' ? (options.head || (options.wrongHead ? 'b'.repeat(40) : 'a'.repeat(40))) : 'a'.repeat(40)
+          if (args[0] === 'diff') return options.recoveryChanges || ''
           throw new Error(`Unexpected git command: ${args}`)
         }
         assert.equal(command, 'tar')
@@ -98,7 +99,7 @@ async function scenario(options = {}) {
         return JSON.stringify(manifest)
       },
       spawnSync: (command, args) => {
-        if (command === 'git') return { status: options.offMain ? 1 : 0 }
+        if (command === 'git') return { status: options.offMain || (options.tagNotAncestor && args.at(-1) !== 'refs/remotes/origin/main') ? 1 : 0 }
         assert.equal(command, 'npm')
         assert.equal(args[0], 'publish')
         const pkg = packages.find(pkg => args[1].endsWith(pkg.file))
@@ -288,4 +289,25 @@ for (const [name, options, message, writes] of rejections) test(`rejects ${name}
     assert.equal(events.filter(([kind]) => kind === 'publish').length, 1)
     assert.ok(events.filter(([kind]) => kind === 'request').every(([, request]) => request.at < 600000))
   }
+})
+
+
+const retryEnv = { GITHUB_EVENT_NAME: 'workflow_dispatch', GITHUB_REF: 'refs/heads/main', FASTUI_RELEASE_TAG: `v${version}`, GITHUB_SHA: 'b'.repeat(40) }
+test('main-branch retry permits release-controller fixes while retaining immutable tag payload', async () => {
+  const { events, error } = await scenario({ env: retryEnv, head: 'b'.repeat(40), recoveryChanges: 'scripts/publish.mjs\n.github/workflows/publish.yml\nRELEASING.md\n' })
+  assert.ifError(error)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 3)
+})
+for (const [name, options, pattern] of [
+  ['untrusted branch', { env: { ...retryEnv, GITHUB_REF: 'refs/heads/feature' }, head: 'b'.repeat(40) }, /tag-push/],
+  ['missing tag', { env: { ...retryEnv, FASTUI_RELEASE_TAG: undefined }, head: 'b'.repeat(40) }, /tag-push/],
+  ['wrong tag version', { env: { ...retryEnv, FASTUI_RELEASE_TAG: 'v9.9.9' }, head: 'b'.repeat(40) }, /tag-push/],
+  ['wrong workflow SHA', { env: retryEnv }, /Dispatch HEAD/],
+  ['unrelated tag history', { env: retryEnv, head: 'b'.repeat(40), tagNotAncestor: true }, /ancestor of retry/],
+  ['changed package payload', { env: retryEnv, head: 'b'.repeat(40), recoveryChanges: 'packages/react/src/index.tsx' }, /changed release payload/],
+  ['changed build input', { env: retryEnv, head: 'b'.repeat(40), recoveryChanges: 'scripts/build.mjs' }, /changed release payload/],
+]) test(`main-branch retry rejects ${name} before registry writes`, async () => {
+  const { events, error } = await scenario(options)
+  assert.match(error.message, pattern)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 0)
 })

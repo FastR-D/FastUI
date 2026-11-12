@@ -32,3 +32,18 @@ tag, unpublish a version, or reuse a version number to repair an upload.
 The repository pins pnpm 10.33.0. npm CLI remains necessary for original tarball
 packing and OIDC publication. The publish:tag script invokes npm directly.
 The docs.yml Pages workflow deploys documentation independently on main.
+
+
+## Retrying an immutable tag after a controller failure
+
+An annotated tag may be peeled by actions/checkout; fetch only main afterwards,
+without attempting to overwrite the local tag object. Never replace the remote tag.
+
+If the publication controller itself needs repair, commit only the permitted
+controller/workflow or release-documentation fixes to main. Dispatch publish.yml
+on main with input `tag=vX.Y.Z`. The controller requires the tag to be an ancestor,
+HEAD to equal the workflow SHA, a clean main-history checkout, and an exact diff
+allowlist. Package files, dependencies, build scripts and every other payload input
+must be unchanged since the tag. A changed payload requires a new version.
+The provenance source is the retry commit, containing the identical release payload
+and the controller fix; the version tag remains immutable.

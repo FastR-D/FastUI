@@ -99,7 +99,7 @@ workspace 依赖开发，已发布包保持精确的 registry 版本依赖。
 `verify` 打包原始候选 tarball，通过临时 registry 安装进干净的 Vue、React 19、
 React 18.3 和原生 HTML 消费者。每个消费者使用独立 pnpm store，不使用源码 alias，
 类型检查与生产浏览器回归覆盖表单、主题、嵌套弹窗、页签、焦点及响应式布局。
-产物写入 `artifacts/0.3.0/`，包含 62 个场景、构建日志、校验和和截图；发布入口另有 49 项边界测试。
+产物写入 `artifacts/0.3.0/`，包含 62 个场景、构建日志、校验和和截图；发布入口另有 57 项边界测试。
 
 ## 文档站点
 
@@ -121,7 +121,7 @@ pnpm docs:test      # 验证已构建文档；与构建使用相同的 DOCS_BASE
 ## 自动发布
 
 `.github/workflows/check.yml` 用 pnpm 冻结锁文件并验证消费者。
-`.github/workflows/publish.yml` 只在匹配 `vX.Y.Z` tag 时使用 npm Trusted Publishing
+`.github/workflows/publish.yml` 由 `vX.Y.Z` tag 触发，或从 main 对载荷未变的现有标签手动重试，使用 npm Trusted Publishing
 （GitHub OIDC）发布，先 foundation、再 Vue / React，原始归档必须通过完整性校验。
 设置与流程见 [RELEASING.md](RELEASING.md)。
 
