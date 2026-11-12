@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -29,10 +29,11 @@ jobs:
         run: pnpm docs:build
         env:
           DOCS_BASE_PATH: ${{ steps.pages.outputs.base_path || '/' }}
-      - run: pnpm exec playwright install --with-deps chromium
+      # Use runner Chrome instead of downloading browser system dependencies.
       - run: pnpm docs:test
         env:
           DOCS_BASE_PATH: ${{ steps.pages.outputs.base_path || '/' }}
+          PLAYWRIGHT_CHANNEL: chrome
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -45,7 +46,7 @@ jobs:
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       pages: write
       id-token: write

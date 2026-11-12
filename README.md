@@ -79,7 +79,8 @@ pnpm docs:test      # 验证已构建文档；与构建使用相同的 DOCS_BASE
 
 `.github/workflows/docs.yml` 对 PR 构建与浏览器检查，在 main 推送时部署 GitHub Pages。
 首次需在仓库 **Settings → Pages → Source** 选择 **GitHub Actions**；部署路径由 Pages
-元数据决定，兼容 `/FastUI/` 与自定义域名。文档发布独立于 npm 包发布。
+元数据决定，兼容 `/FastUI/` 与自定义域名。文档发布独立于 npm 包发布。站点仅托管于 [GitHub Pages](https://fastr-d.github.io/FastUI/)，
+不部署到 fastrd 服务器；详见 [发布说明](docs/deployment.md)。
 
 ## 自动发布
 

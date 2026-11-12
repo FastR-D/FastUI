@@ -2,7 +2,7 @@ name: Publish npm packages
 
 on:
   push:
-    # Server deployments must not publish language packages.
+    # Historical server deployment tags must not publish language packages.
     tags: ['v*', '!v*-deploy.*']
 
 permissions:
