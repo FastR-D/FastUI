@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 
 const artifacts = resolve('artifacts/docs')
 await mkdir(artifacts, { recursive: true })
-const base = (process.env.DOCS_BASE_PATH || '/').replace(/\/?$/, '/')
+const base = (process.env.DOCS_BASE_PATH || '/').replace(/\/*$/, '/')
 const server = await preview({ configFile: resolve('docs/vite.config.ts'), preview: { host: '127.0.0.1', port: 0 } })
 const origin = `http://127.0.0.1:${server.httpServer.address().port}`
 const url = origin + base
@@ -19,6 +19,17 @@ try {
   page.on('response', response => { if (response.status() >= 400 && response.url().startsWith(origin)) failures.push(`${response.status()} ${response.url()}`) })
   await page.goto(url)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('介绍与安装')
+  await expect(page.locator('.brand-mark')).toHaveAttribute('src', `${base}brand/fastui-icon.svg`)
+  await expect.poll(() => page.locator('.brand-mark').evaluate(image => image.naturalWidth)).toBeGreaterThan(0)
+  const icons = await page.locator('link[rel="icon"], link[rel="apple-touch-icon"]').evaluateAll(links => links.map(link => ({ href: link.getAttribute('href'), type: link.type || 'image/png' })))
+  expect(icons).toHaveLength(3)
+  for (const icon of icons) {
+    expect(icon.href.startsWith(`${base}brand/`)).toBe(true)
+    const response = await page.request.get(new URL(icon.href, url).href)
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['content-type']).toContain(icon.type)
+  }
+  results.push('brand-image-favicons-and-apple-touch-icon')
   await page.evaluate(() => Promise.all([document.fonts.load('500 14px \"IBM Plex Sans Variable\"', 'Research'), document.fonts.load('500 14px \"Noto Sans SC Variable\"', '界面')]))
   expect(await page.evaluate(() => document.fonts.check('500 14px \"IBM Plex Sans Variable\"', 'Research') && document.fonts.check('500 14px \"Noto Sans SC Variable\"', '界面'))).toBe(true)
   await page.getByRole('searchbox', { name: '查找文档' }).fill('不存在的标题')
