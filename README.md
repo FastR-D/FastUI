@@ -17,7 +17,7 @@
 ```sh
 pnpm add @fastrd/ui-react @fastrd/ui-foundation
 # Vue 使用 @fastrd/ui-vue
-pnpm add -D unocss
+pnpm add -D unocss @types/node@^22
 ```
 
 ```ts
