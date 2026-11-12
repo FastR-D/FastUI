@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from 'react'
+import { forwardRef, type HTMLAttributes, type ReactNode, type ButtonHTMLAttributes, type DetailsHTMLAttributes } from 'react'
 import { tabNavigationIndex } from '@fastrd/ui-foundation'
 
 export interface TabItem {
@@ -63,19 +63,49 @@ export function SegmentedControl({ options, value, onChange, label, className = 
   </div>
 }
 /** An action group. Native Tab order is preserved for mixed form controls. */
-export const Toolbar = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { label: string }>(function Toolbar({ label, className = '', ...props }, ref) {
+export const Toolbar = /* @__PURE__ */ forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { label: string }>(function Toolbar({ label, className = '', ...props }, ref) {
   return <div {...props} ref={ref} className={`fastui-toolbar ${className}`} role="group" aria-label={label} />
 })
-export const StatusBar = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(function StatusBar({ className = '', ...props }, ref) {
+export const StatusBar = /* @__PURE__ */ forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(function StatusBar({ className = '', ...props }, ref) {
   return <div role="status" {...props} ref={ref} className={`fastui-statusbar ${className}`} />
 })
-export const Section = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(function Section({ className = '', ...props }, ref) {
+export const Section = /* @__PURE__ */ forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(function Section({ className = '', ...props }, ref) {
   return <section {...props} ref={ref} className={`fastui-section ${className}`} />
 })
-export const Divider = forwardRef<HTMLHRElement, HTMLAttributes<HTMLHRElement>>(function Divider({ className = '', ...props }, ref) {
+export const Divider = /* @__PURE__ */ forwardRef<HTMLHRElement, HTMLAttributes<HTMLHRElement>>(function Divider({ className = '', ...props }, ref) {
   return <hr {...props} ref={ref} className={`fastui-divider ${className}`} />
 })
 export interface ListRowProps extends HTMLAttributes<HTMLDivElement> { children?: ReactNode }
-export const ListRow = forwardRef<HTMLDivElement, ListRowProps>(function ListRow({ className = '', ...props }, ref) {
+export const ListRow = /* @__PURE__ */ forwardRef<HTMLDivElement, ListRowProps>(function ListRow({ className = '', ...props }, ref) {
   return <div {...props} ref={ref} className={`fastui-list-row ${className}`} />
+})
+
+/** Native navigation: supply labelled navigation buttons or links as children. */
+export const ActivityRail = /* @__PURE__ */ forwardRef<HTMLElement, HTMLAttributes<HTMLElement> & { label: string }>(function ActivityRail({ label, className = '', ...props }, ref) {
+  return <nav {...props} ref={ref} aria-label={label} className={`fastui-activity-rail ${className}`} />
+})
+export const PanelHeader = /* @__PURE__ */ forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(function PanelHeader({ className = '', ...props }, ref) {
+  return <div {...props} ref={ref} className={`fastui-panel-header ${className}`} />
+})
+export interface InspectorSectionProps extends DetailsHTMLAttributes<HTMLDetailsElement> { label: string }
+/** Native disclosure; omit open for browser-owned state, or control it via onToggle. */
+export const InspectorSection = /* @__PURE__ */ forwardRef<HTMLDetailsElement, InspectorSectionProps>(function InspectorSection({ label, children, className = '', ...props }, ref) {
+  return <details {...props} ref={ref} className={`fastui-inspector-section ${className}`}><summary>{label}</summary><div className="fastui-inspector-body">{children}</div></details>
+})
+export interface AssetCardProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  label: string
+  description?: string
+  preview?: ReactNode
+  selected?: boolean
+}
+/** A selectable asset button. Preview content must be noninteractive. */
+export const AssetCard = /* @__PURE__ */ forwardRef<HTMLButtonElement, AssetCardProps>(function AssetCard({ label, description, preview, selected, className = '', type = 'button', ...props }, ref) {
+  return <button {...props} ref={ref} type={type} aria-pressed={selected ?? props['aria-pressed']} className={`fastui-asset-card ${className}`}>
+    {preview != null && <span className="fastui-asset-preview" aria-hidden="true">{preview}</span>}
+    <span className="fastui-asset-label">{label}</span>{description && <span className="fastui-asset-description">{description}</span>}
+  </button>
+})
+export interface CanvasSurfaceProps extends HTMLAttributes<HTMLDivElement> { grid?: boolean }
+export const CanvasSurface = /* @__PURE__ */ forwardRef<HTMLDivElement, CanvasSurfaceProps>(function CanvasSurface({ grid = true, className = '', ...props }, ref) {
+  return <div {...props} ref={ref} className={`fastui-canvas ${grid ? 'fastui-canvas--grid' : ''} ${className}`} />
 })

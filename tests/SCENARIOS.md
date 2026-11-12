@@ -2,8 +2,7 @@
 
 The entry point is clean Vue/React/HTML applications installed from tarballs and served
 from their production Vite 6 builds. No source aliases or internal mocks.
-The final GitHub release URLs are served at the external HTTPS download boundary
-by a local fixture until upload. Package and example manifests stay unchanged;
+The original npm tarballs are served by a temporary registry fixture until publication. Package and example manifests stay unchanged;
 each consumer uses a fresh pnpm store and explicitly installs dev dependencies.
 The React example also builds with pinned React/ReactDOM 18.3.1 and matching
 18.3 types; Vue/React type checks run with skipLibCheck=false.
@@ -12,7 +11,7 @@ The root and isolated consumer installs use pnpm; npm CLI only packs candidates.
 
 Failure modes to exercise before acceptance:
 
-- Package resolution: missing ESM/type/CSS export, bundled framework peers,
+- Package resolution: missing ESM/type/UnoCSS export, bundled framework peers,
   unresolved internal registry dependency, incompatible Vite 6 declarations.
 - Forms: button accidentally submits, disabled/loading click, controlled input
   stops updating, Vue trim/number/lazy or checkbox model breaks, IME commits
@@ -44,3 +43,7 @@ not automatically approved golden images.
 Workbench regressions cover React 18/19 and Vue: automatic tab activation,
 wraparound, Home/End, disabled skipping, RTL, 6px unsaved marker, flat styling,
 close focus restoration, empty state, and controlled segmented status.
+
+React/Vue consumers use UnoCSS; removed framework styles.css paths are rejected.
+Static HTML retains foundation tokens.css/controls.css. Example-local unconfig
+declaration patches preserve skipLibCheck=false without changing runtime code.

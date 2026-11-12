@@ -1,6 +1,6 @@
 {
   "name": "@fastrd/ui-vue",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Vue primitives and accessible native controls for FastUI",
   "type": "module",
   "license": "MIT",
@@ -18,11 +18,9 @@
     "README.md",
     "NOTICE.md"
   ],
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": false,
   "dependencies": {
-    "@fastrd/ui-foundation": "0.2.0"
+    "@fastrd/ui-foundation": "0.3.0"
   },
   "peerDependencies": {
     "vue": "^3.5.0"
@@ -31,7 +29,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./styles.css": "./dist/styles.css"
+    }
   }
 }

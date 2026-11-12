@@ -2,6 +2,7 @@ import { chromium, expect } from '@playwright/test'
 import { preview } from 'vite'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import { runMobileScenarios } from './mobile.mjs'
 
 const artifacts = resolve('artifacts/docs')
 await mkdir(artifacts, { recursive: true })
@@ -81,6 +82,64 @@ try {
   }
   expect(await page.locator('.fastui-spinner').first().evaluate(node => getComputedStyle(node).animationName)).toBe('none')
   results.push('react-vue-tabs-dialog-focus-code-and-reduced-motion')
+  const editor = page.getByTestId('react-editor')
+  await editor.getByRole('button', { name: '流程结构' }).click()
+  await expect(editor.getByRole('button', { name: '流程结构' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(editor.getByRole('button', { name: '趋势图表' })).toHaveAttribute('aria-pressed', 'false')
+  await expect(editor.getByRole('heading', { name: '研究工作流程' })).toBeVisible()
+  await editor.getByText('画布信息', { exact: true }).focus()
+  await page.keyboard.press('Enter')
+  await expect(editor.getByText('160 × 90 mm')).toBeVisible()
+  await page.keyboard.press('Space')
+  await expect(editor.getByText('160 × 90 mm')).not.toBeVisible()
+  await editor.getByRole('navigation', { name: '编辑器导航' }).getByRole('button', { name: '图层' }).click()
+  await expect(editor.getByRole('heading', { name: '图层' })).toBeVisible()
+  const vueEditor = page.getByTestId('vue-editor')
+  await vueEditor.getByRole('button', { name: 'Vue 流程' }).focus()
+  await page.keyboard.press('Enter')
+  await expect(vueEditor.getByRole('button', { name: 'Vue 流程' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(vueEditor.getByLabel('Vue 画布预览')).toHaveText('流程预览')
+  await expect(vueEditor.getByLabel('Vue 画布预览')).not.toHaveClass(/fastui-canvas--grid/)
+  await vueEditor.getByText('Vue 属性', { exact: true }).click()
+  await expect(vueEditor.locator('.fastui-inspector-body')).toBeVisible()
+  // Both frameworks preserve disabled props and prevent accidental form submit.
+  await expect(editor.getByRole('button', { name: '团队素材' })).toBeDisabled()
+  await expect(vueEditor.getByRole('button', { name: 'Vue 锁定素材' })).toBeDisabled()
+  for (const root of [editor, vueEditor]) {
+    const card = root.getByRole('button', { name: /流程/ }).first()
+    await expect(card).toHaveAttribute('type', 'button')
+  }
+  for (const mode of ['light', 'dark']) {
+    await page.getByRole('combobox', { name: '颜色模式' }).selectOption(mode)
+    for (const root of [editor, vueEditor]) {
+      expect(await root.locator('.fastui-canvas').evaluate(node => getComputedStyle(node).backgroundColor)).toBe(mode === 'light' ? 'rgb(238, 240, 243)' : 'rgb(16, 22, 30)')
+    }
+    const button = page.getByRole('button', { name: '新建项目', exact: true })
+    await button.hover()
+    expect(await button.evaluate(node => getComputedStyle(node).color)).toBe('rgb(255, 255, 255)')
+  }
+  await page.emulateMedia({ forcedColors: 'active' })
+  await expect(editor.getByRole('button', { name: '流程结构' })).toHaveCSS('outline-style', 'solid')
+  await page.emulateMedia({ forcedColors: 'none' })
+  results.push('editor-primitives-react-vue-selection-keyboard-disclosure-disabled-grid-themes-forced-colors')
+  // Preserve the established FastUI / FastWrite visual contract in both themes.
+  for (const [mode, primary, secondary] of [
+    ['light', 'rgb(21, 95, 184)', 'rgb(239, 241, 244)'],
+    ['dark', 'rgb(14, 99, 156)', 'rgb(42, 53, 67)'],
+  ]) {
+    await page.getByRole('combobox', { name: '颜色模式' }).selectOption(mode)
+    const primaryButton = page.getByRole('button', { name: '新建项目', exact: true })
+    await page.mouse.move(0, 0)
+    await expect(primaryButton).toHaveCSS('background-color', primary)
+    await expect(page.getByRole('button', { name: '导入项目', exact: true })).toHaveCSS('background-color', secondary)
+    await expect(primaryButton).toHaveCSS('min-height', '25px')
+    await expect(primaryButton).toHaveCSS('border-radius', '4px')
+    await expect(page.getByRole('textbox', { name: '项目名称', exact: true })).toHaveCSS('min-height', '28px')
+    await expect(editor.getByRole('button', { name: '趋势图表' })).toHaveCSS('border-radius', '6px')
+  }
+  results.push('fastwrite-original-palette-filled-secondary-compact-geometry')
+
+
   await page.goto(`${url}#/patterns`)
   await expect(page.getByRole('status').filter({ hasText: '3 个项目' })).toBeVisible()
   await page.getByRole('group', { name: '项目来源' }).getByRole('button', { name: 'GitHub' }).click()
@@ -130,6 +189,7 @@ try {
   expect(errors).toEqual([])
   results.push('deployment-base-assets-font-licenses-no-runtime-errors')
   await context.close()
+  results.push(...await runMobileScenarios(browser, url, artifacts))
   await writeFile(resolve(artifacts, 'results.json'), JSON.stringify({ status: 'passed', base, scenarios: results }, null, 2) + '\n')
   console.log(`PASS: ${results.length} documentation scenario groups; ${url}`)
 } finally {

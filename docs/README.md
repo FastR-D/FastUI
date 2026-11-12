@@ -20,13 +20,13 @@ DOCS_BASE_PATH=/FastUI/ pnpm docs:preview
 默认本地路径 `/`；构建与测试传入相同路径。所有页内导航采用 hash 路由，直接打开
 `/FastUI/#/components` 不依赖服务器回退。不存在的文档显示返回入口。
 
-`docs/src/main.tsx` 提供内容与示例；`site.css` 管理文档自身布局，组件外观来自包 CSS。
+`docs/src/main.tsx` 提供内容与示例；`site.css` 管理文档自身布局，组件外观由 FastUI UnoCSS preset 按需生成。
 `reference-sources.json` 记录 FastWrite/reference 中的固定参考版本。
 字体通过锁定的 Fontsource 版本自托管，`public/licenses/fonts/` 保留各字体的 OFL 许可证。
 
 `docs:test` 启动自己的 Vite production preview，检查所有导航、搜索、双框架键盘行为、
 焦点恢复、项目搜索筛选排序、主题持久化、子路径资源、字体加载与 320–1440px
-浅深色布局；结果与截图写入 `artifacts/docs/`。测试结束自动关闭服务器。
+浅深色布局，以及真实触控上下文下的手机、平板、横屏、弹窗短视口、导航焦点与密度切换；结果与截图写入 `artifacts/docs/`。测试结束自动关闭服务器。
 
 GitHub Actions：
 
@@ -37,3 +37,5 @@ GitHub Actions：
 
 参考 [GitHub Pages 工作流说明](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 和 [Vite 静态部署说明](https://vite.dev/guide/static-deploy.html#github-pages)。
+
+默认接入与已移除入口见 [迁移说明](MIGRATION.md)。JS/CSS 裁剪检查：`pnpm test:tree-shaking`。

@@ -8,32 +8,59 @@
 | `@fastrd/ui-react` | React 18.3 / 19 控件、弹窗、反馈与工作台组件 |
 | `@fastrd/ui-vue` | Vue 3.5 控件、v-model、弹窗、反馈与工作台组件 |
 
-**0.2.0** · 三包版本统一，框架包精确依赖同版本 foundation。
+**0.3.0** · 三包版本统一，框架包精确依赖同版本 foundation。
 
-## 使用
+## 使用 UnoCSS（推荐）
+
+0.3.0 使用 UnoCSS preset 作为 React / Vue 的样式接入方式。
 
 ```sh
-pnpm add @fastrd/ui-react@0.2.0
-# 或 @fastrd/ui-vue@0.2.0、@fastrd/ui-foundation@0.2.0
+pnpm add @fastrd/ui-react @fastrd/ui-foundation
+# Vue 使用 @fastrd/ui-vue
+pnpm add -D unocss
+```
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import UnoCSS from 'unocss/vite'
+export default defineConfig({ plugins: [UnoCSS()] })
+
+// uno.config.ts
+import { defineConfig } from 'unocss'
+import { fastUIContent, presetFastUI } from '@fastrd/ui-foundation/uno'
+export default defineConfig({ content: fastUIContent, presets: [presetFastUI()] })
 ```
 
 ```tsx
 import { initColorMode } from '@fastrd/ui-foundation'
 import { Button, TextField } from '@fastrd/ui-react'
-import '@fastrd/ui-react/styles.css'
+import 'virtual:uno.css'
 
-// 在挂载内容前调用；继续使用产品已有的主题 preference key。
 const theme = initColorMode({ storageKey: 'your-existing-theme-key' })
-
 <label className="fastui-field">名称<TextField /></label>
 <Button variant="primary">保存</Button>
 ```
 
-Vue 导入 `@fastrd/ui-vue/styles.css`；原生 HTML 显式导入 foundation 的
-`tokens.css` 与 `controls.css`，并给控件添加 `.fastui-*` 类。库不包含全局 reset。
-详见各包 README 与 [开发指南](docs/DEVELOPMENT.md)。
+Vue 使用相同 preset。UnoCSS 在构建时根据组件导入或 `fastui-*` 类生成样式，按组件类别裁剪，
+保留该组件的全部变体、浅深色、触控和无障碍状态。动态组件注册或第三方封装可通过
+`presetFastUI({ components: ['Button', 'Dialog'] })` 显式声明。JS 的 ESM 导出支持 tree shaking，
+UnoCSS 不进入组件运行时。
 
-## 与 FastWrite 对齐
+**0.3.0 已移除** `@fastrd/ui-react/styles.css` 和 `@fastrd/ui-vue/styles.css` 全量样式入口。
+升级时删除旧导入，改用 UnoCSS preset；不再生成或导出兼容文件。
+静态 HTML / 无 UnoCSS 工具链继续使用 foundation 的 `tokens.css` 与 `controls.css`。
+库不包含全局 reset。详见 [迁移说明](docs/MIGRATION.md)。
+
+## 移动端
+
+宽度不超过 900px 的触摸设备自动采用 44px 控件点击区域和 16px 表单字号。
+桌面保持 24 / 25 / 28px 紧凑尺寸及 FastWrite 配色。容器可使用
+`data-fastui-density="touch"` / `"compact"` 局部指定密度，React、Vue 与 HTML 一致。
+窄屏弹窗兼容动态视口和安全区；页签、画布与 `.fastui-table-scroll` 使用局部滚动。
+活动栏和多面板的重新排列由宿主布局负责，文档包含手机、平板与横屏示例。
+
+## 视觉规范与对齐方向
 
 - IBM Plex Sans / Noto Sans SC 字体栈，正文 500、代码 450 字重，提供系统字体回退。
   字体由宿主自托管；组件包不携带字体资源。
@@ -42,7 +69,15 @@ Vue 导入 `@fastrd/ui-vue/styles.css`；原生 HTML 显式导入 foundation 的
 - 平直页签、顶部细线、6px 未保存标记、矩形键盘焦点。
 - 新增 TabBar、SegmentedControl、Toolbar、StatusBar、Section、ListRow、Divider；
   Vue 补齐 Alert、Badge、Loading、EmptyState。页签支持方向键、Home / End、RTL、禁用跳过与关闭后焦点恢复。
+- 新增 ActivityRail、PanelHeader、InspectorSection、AssetCard、CanvasSurface，
+  提供活动栏、面板标题、原生折叠属性区、素材卡片与网格画布；React / Vue 同步支持。
 - 使用 FastUI 原生语义变量；MDUI 提供显式局部映射。
+
+视觉基准以原版 FastUI 和 FastWrite 为主：配色、字体、控件密度、圆角、填充次按钮与焦点样式
+均沿用原有规范。FastPPT / FastFigure 仅提供通用组件的组织与交互参考，后续向
+FastWrite / FastUI 的规范统一。新增组件直接使用同一套语义变量，不另设产品色板。
+
+0.3.0 包含 UnoCSS 按需样式、JS tree shaking、编辑器组件与移动端适配。
 
 ## 开发与验证
 
@@ -55,6 +90,7 @@ pnpm exec playwright install chromium
 pnpm build
 pnpm verify
 pnpm test:release
+pnpm test:tree-shaking
 ```
 
 仓库唯一锁文件是 `pnpm-lock.yaml`。`pnpm-workspace.yaml` 链接三包；根目录仅使用
@@ -63,7 +99,7 @@ workspace 依赖开发，已发布包保持精确的 registry 版本依赖。
 `verify` 打包原始候选 tarball，通过临时 registry 安装进干净的 Vue、React 19、
 React 18.3 和原生 HTML 消费者。每个消费者使用独立 pnpm store，不使用源码 alias，
 类型检查与生产浏览器回归覆盖表单、主题、嵌套弹窗、页签、焦点及响应式布局。
-产物写入 `artifacts/0.2.0/`，包含 62 个场景、构建日志、校验和和截图；发布入口另有 49 项边界测试。
+产物写入 `artifacts/0.3.0/`，包含 62 个场景、构建日志、校验和和截图；发布入口另有 49 项边界测试。
 
 ## 文档站点
 

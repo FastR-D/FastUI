@@ -39,6 +39,8 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: Build and verify original packed candidates
         run: pnpm verify
+      - name: Verify UnoCSS and ESM tree shaking
+        run: pnpm test:tree-shaking
       - name: Check publication entry against controlled Git and registry boundaries
         run: node --experimental-vm-modules --test scripts/publish.test.mjs
       - name: Publish foundation then framework packages using OIDC

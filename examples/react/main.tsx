@@ -4,7 +4,7 @@ import { WorkbenchCases } from './WorkbenchCases'
 import { DialogCases } from './DialogCases'
 import { initColorMode } from '@fastrd/ui-foundation'
 import { Button, TextField, TextArea, Checkbox, Select, Dialog, Alert, Badge, EmptyState, Loading } from '@fastrd/ui-react'
-import '@fastrd/ui-react/styles.css'
+import 'virtual:uno.css'
 import './example.css'
 const theme = initColorMode({ storageKey: 'fastui-example-mode' })
 Object.assign(window, { theme })

@@ -1,6 +1,6 @@
 # @fastrd/ui-foundation
 
-MIT · 0.2.0 · Framework-independent ESM, types and explicitly imported CSS.
+MIT · 0.3.0 · Framework-independent ESM, types and explicitly imported CSS.
 
 ```js
 import { initColorMode } from '@fastrd/ui-foundation'
@@ -39,3 +39,39 @@ in the head without async/defer. Native dialog stays in its original theme scope
 helper used by both component packages. It handles Left/Right, Home/End,
 wraparound and disabled items, returning -1 for unhandled keys/all-disabled lists.
 It does not manage DOM focus or panels; HTML hosts implement those behaviors.
+
+Editor HTML classes: `.fastui-activity-rail` (nav), `.fastui-panel-header` (div),
+`.fastui-inspector-section` (details containing summary and
+`.fastui-inspector-body`), `.fastui-asset-card` (button containing optional
+`.fastui-asset-preview`, `.fastui-asset-label`, `.fastui-asset-description`),
+`.fastui-canvas` with optional `.fastui-canvas--grid`. Asset previews are
+decorative; use aria-hidden=true. Native buttons own disabled and aria-pressed.
+These classes do not prescribe application panel layout or canvas behavior.
+
+
+## UnoCSS (recommended for framework apps)
+
+Install UnoCSS as a development dependency, enable `UnoCSS()` from `unocss/vite`,
+then add `presetFastUI()` from `@fastrd/ui-foundation/uno` to your Uno configuration.
+Import `virtual:uno.css` once, without importing full controls or framework CSS.
+The preset works at build time and adds no browser runtime. It is available from 0.3.0.
+
+The preset recognizes named component imports (including aliases), namespace
+member access, and literal `fastui-*` HTML classes. It retains all states/variants
+of used component families. For dynamically registered components or wrappers,
+pass `components: ['Button', 'Modal']`. Tokens and shared density rules always
+remain; unused dialog, tab, asset and other component CSS can be omitted.
+The framework packages' full `styles.css` entries were removed in 0.3.0. Static HTML and consumers without UnoCSS may still use tokens/controls CSS.
+
+## Touch density
+
+`--fastui-touch-target` / `--fastui-touch-input-font-size` default to 0px, preserving
+compact desktop geometry. Coarse-pointer devices up to 900px set them to 44px/16px.
+`data-fastui-density="touch"` or `"compact"` overrides them locally, including
+nested scopes. Checkbox/radio labels should use `.fastui-field` for a larger hit
+area. Narrow dialogs use dynamic viewport limits and safe-area insets. Wide tables
+can use `.fastui-table-scroll` with role=region, aria-label and tabindex=0.
+
+Set top-level `content: fastUIContent` (exported from `@fastrd/ui-foundation/uno`)
+to include plain JS/TS consumers in the UnoCSS Vite pipeline. Preset-local content
+options alone do not expand the Vite filter. JSX/TSX/Vue/HTML are covered too.

@@ -5,7 +5,7 @@
   font-size: var(--fastui-font-size);
   font-weight: var(--fastui-font-weight);
   line-height: 1.5;
-  min-height: var(--fastui-height-md);
+  min-height: max(var(--fastui-height-md), var(--fastui-touch-target));
   padding: 3px 6px;
   border: 1px solid var(--fastui-border-strong);
   border-radius: var(--fastui-radius-control);
@@ -16,8 +16,8 @@
   color-scheme: var(--fastui-color-scheme);
 }
 .fastui-button { transition: background-color var(--fastui-duration-fast) var(--fastui-ease), color var(--fastui-duration-fast) var(--fastui-ease); display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-weight: 600; text-decoration: none; }
-.fastui-button--sm, .fastui-input--sm, .fastui-select--sm { min-height: var(--fastui-height-sm); padding: 2px 8px; font-size: 12px; }
-.fastui-button--xs, .fastui-input--xs, .fastui-select--xs { min-height: var(--fastui-height-xs); padding: 1px 6px; font-size: 12px; }
+.fastui-button--sm, .fastui-input--sm, .fastui-select--sm { min-height: max(var(--fastui-height-sm), var(--fastui-touch-target)); padding: 2px 8px; font-size: 12px; }
+.fastui-button--xs, .fastui-input--xs, .fastui-select--xs { min-height: max(var(--fastui-height-xs), var(--fastui-touch-target)); padding: 1px 6px; font-size: 12px; }
 .fastui-button { padding-inline: 11px; background: var(--fastui-raised); border-color: transparent; }
 .fastui-button:hover:not(:disabled) { background: var(--fastui-secondary-hover); }
 .fastui-button--primary { background: var(--fastui-primary); border-color: var(--fastui-primary); color: var(--fastui-on-primary); }
@@ -71,10 +71,10 @@
 .fastui-section > header { padding: 10px 12px; border-bottom: 1px solid var(--fastui-border); }
 .fastui-list-row { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 10px 12px; border-bottom: 1px solid var(--fastui-border); color: var(--fastui-text); font: var(--fastui-font-weight) 13px/1.5 var(--fastui-font); text-decoration: none; }
 .fastui-list-row:hover { background: var(--fastui-hover); }
-.fastui-list-row[aria-current], .fastui-list-row[aria-selected=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
+.fastui-list-row[aria-current]:not([aria-current=false]), .fastui-list-row[aria-selected=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
 .fastui-tabs { display: flex; align-items: stretch; overflow-x: auto; min-width: 0; background: var(--fastui-chrome); border-bottom: 1px solid var(--fastui-border); }
-.fastui-tab-item { display: inline-flex; flex: 0 0 auto; align-items: center; max-width: 300px; height: var(--fastui-tab-height); border-top: 2px solid transparent; }
-.fastui-tabs--closable .fastui-tab-item { height: 34px; border-right: 1px solid var(--fastui-border); }
+.fastui-tab-item { display: inline-flex; flex: 0 0 auto; align-items: center; max-width: 300px; height: max(var(--fastui-tab-height), var(--fastui-touch-target)); border-top: 2px solid transparent; }
+.fastui-tabs--closable .fastui-tab-item { height: max(34px, var(--fastui-touch-target)); border-right: 1px solid var(--fastui-border); }
 .fastui-tab-item:has([aria-selected=true]) { border-top-color: var(--fastui-focus); background: var(--fastui-surface); }
 .fastui-tab, .fastui-tab-close, .fastui-segment { font: var(--fastui-font-weight) var(--fastui-font-size)/1.5 var(--fastui-font); color: var(--fastui-muted); border: 0; background: transparent; cursor: pointer; }
 .fastui-tab { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; height: 100%; padding: 0 12px; white-space: nowrap; border-radius: 0; }
@@ -85,9 +85,9 @@
 .fastui-tab:focus-visible, .fastui-tab-close:focus-visible, .fastui-segment:focus-visible, .fastui-list-row:focus-visible { outline: 1px solid var(--fastui-focus); outline-offset: -2px; box-shadow: none; }
 .fastui-tab--preview { font-style: italic; }
 .fastui-tab-dirty { display: inline-block; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--fastui-muted); }
-.fastui-tab-close { flex: 0 0 20px; width: 20px; height: 20px; margin-right: 4px; padding: 0; }
+.fastui-tab-close { flex: 0 0 max(20px, var(--fastui-touch-target)); width: max(20px, var(--fastui-touch-target)); height: max(20px, var(--fastui-touch-target)); margin-right: 4px; padding: 0; }
 .fastui-segments { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-control); background: var(--fastui-chrome); }
-.fastui-segment { min-height: var(--fastui-height-sm); padding: 2px 10px; border-radius: 2px; color: var(--fastui-secondary); }
+.fastui-segment { min-height: max(var(--fastui-height-sm), var(--fastui-touch-target)); padding: 2px 10px; border-radius: 2px; color: var(--fastui-secondary); }
 .fastui-segment:hover:not(:disabled) { background: var(--fastui-hover); }
 .fastui-segment[aria-pressed=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
 .fastui-spinner { display: inline-block; box-sizing: border-box; width: 14px; height: 14px; flex-shrink: 0; border: 2px solid var(--fastui-border-strong); border-top-color: var(--fastui-focus); border-radius: 50%; animation: fastui-spin 800ms linear infinite; }
@@ -100,4 +100,68 @@
   .fastui-tab-item:has([aria-selected=true]) { border-top-color: Highlight; }
   .fastui-segment[aria-pressed=true] { outline: 1px solid Highlight; }
   .fastui-tab-dirty { background: CanvasText; }
+}
+
+/* Editor primitives, scoped to opt-in classes; the host owns panel arrangement. */
+.fastui-panel-header { box-sizing: border-box; display: flex; align-items: center; gap: 8px; min-height: var(--fastui-panel-header-height); padding: 6px 12px; border-bottom: 1px solid var(--fastui-border); color: var(--fastui-text); background: var(--fastui-surface); font: 600 12px/1.5 var(--fastui-font); }
+.fastui-panel-header > :where(h2, h3) { margin: 0; font: inherit; }
+.fastui-activity-rail { box-sizing: border-box; display: flex; flex-direction: column; gap: 3px; width: var(--fastui-rail-width); flex-shrink: 0; min-height: 0; overflow-y: auto; padding: 8px 0; border-inline-end: 1px solid var(--fastui-border); background: var(--fastui-surface); }
+.fastui-activity-rail > .fastui-button { flex: 0 0 auto; width: 100%; min-height: 48px; flex-direction: column; gap: 3px; padding: 6px 2px; font-size: 10px; line-height: 1.2; }
+.fastui-activity-rail svg { width: 18px; height: 18px; }
+.fastui-inspector-section { min-width: 0; color: var(--fastui-text); background: var(--fastui-surface); border-bottom: 1px solid var(--fastui-border); font: var(--fastui-font-weight) 12px/1.5 var(--fastui-font); }
+.fastui-inspector-section > summary { display: flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer; font-weight: 600; list-style: none; }
+.fastui-inspector-section > summary::-webkit-details-marker { display: none; }
+.fastui-inspector-section > summary::before { content: ''; width: 5px; height: 5px; border-inline-end: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); flex-shrink: 0; }
+.fastui-inspector-section[open] > summary::before { transform: rotate(45deg); }
+.fastui-inspector-section > summary:hover { background: var(--fastui-hover); }
+.fastui-inspector-body { display: grid; gap: 10px; min-width: 0; padding: 0 12px 12px; }
+.fastui-asset-card { box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; gap: 0; min-width: 0; max-width: 100%; padding: 0; overflow: hidden; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); text-align: start; font: var(--fastui-font-weight) 12px/1.5 var(--fastui-font); cursor: pointer; transition: border-color var(--fastui-duration-fast) var(--fastui-ease); }
+.fastui-asset-card:hover:not(:disabled) { border-color: var(--fastui-focus); }
+.fastui-asset-card[aria-pressed=true] { border-color: var(--fastui-focus); box-shadow: inset 0 0 0 1px var(--fastui-focus); background: var(--fastui-selected); }
+.fastui-asset-preview { display: grid; place-items: center; min-height: 80px; padding: 8px; border-bottom: 1px solid var(--fastui-border); background: var(--fastui-raised); overflow: hidden; }
+.fastui-asset-preview > :where(svg, img) { max-width: 100%; max-height: 100%; }
+.fastui-asset-label { padding: 8px 10px 0; overflow-wrap: anywhere; font-weight: 600; }
+.fastui-asset-description { padding: 3px 10px 10px; color: var(--fastui-muted); font-size: 10px; overflow-wrap: anywhere; }
+.fastui-asset-label:last-child { padding-bottom: 8px; }
+.fastui-asset-card:disabled { cursor: not-allowed; opacity: var(--fastui-disabled-opacity); }
+.fastui-canvas { box-sizing: border-box; display: grid; place-items: safe center; min-width: 0; min-height: 0; overflow: auto; padding: 24px; background-color: var(--fastui-workspace); color: var(--fastui-text); scrollbar-width: thin; scrollbar-color: var(--fastui-scrollbar) transparent; }
+.fastui-canvas--grid { background-image: radial-gradient(var(--fastui-grid-dot) .75px, transparent .75px); background-size: var(--fastui-grid-size) var(--fastui-grid-size); }
+.fastui-inspector-section > summary:focus-visible, .fastui-asset-card:focus-visible, .fastui-activity-rail:focus-visible, .fastui-canvas:focus-visible { outline: 2px solid var(--fastui-focus); outline-offset: -2px; }
+@media (forced-colors: active) {
+  .fastui-asset-card[aria-pressed=true], .fastui-button--navigation[aria-selected=true], .fastui-button--navigation[aria-pressed=true] { outline: 2px solid Highlight; outline-offset: -2px; }
+}
+.fastui-button--navigation[aria-pressed=true] { box-shadow: inset 2px 0 var(--fastui-focus); }
+@media (prefers-reduced-motion: reduce) {
+  .fastui-asset-card { transition: none; }
+}
+
+/* Touch density is additive: desktop tokens and the FastWrite palette stay intact. */
+.fastui-input:not([type=checkbox]):not([type=radio]):not([type=range]), .fastui-textarea, .fastui-select { font-size: max(var(--fastui-font-size), var(--fastui-touch-input-font-size)); }
+.fastui-button--icon { min-width: max(var(--fastui-height-xs), var(--fastui-touch-target)); }
+.fastui-disclosure-trigger, .fastui-inspector-section > summary { box-sizing: border-box; min-height: var(--fastui-touch-target); }
+.fastui-field:has(> .fastui-input:is([type=checkbox], [type=radio])) { display: flex; align-items: center; min-height: var(--fastui-touch-target); }
+.fastui-button, .fastui-tab, .fastui-tab-close, .fastui-segment, .fastui-asset-card, .fastui-disclosure-trigger, .fastui-inspector-section > summary { touch-action: manipulation; }
+.fastui-segments { box-sizing: border-box; min-width: 0; max-width: 100%; }
+.fastui-segment { min-width: 0; overflow-wrap: anywhere; }
+.fastui-tabs { max-width: 100%; overscroll-behavior-inline: contain; scroll-padding-inline: 8px; }
+.fastui-table-scroll { max-width: 100%; overflow: auto; overscroll-behavior-inline: contain; }
+.fastui-canvas { overscroll-behavior: contain; }
+
+@media (max-width: 900px) and (pointer: coarse) {
+  :root { --fastui-touch-target: 44px; --fastui-touch-input-font-size: 16px; }
+}
+/* May be placed on a root, a panel or an individual control. */
+[data-fastui-density=touch] { --fastui-touch-target: 44px; --fastui-touch-input-font-size: 16px; }
+[data-fastui-density=compact] { --fastui-touch-target: 0px; --fastui-touch-input-font-size: 0px; }
+
+@media (max-width: 680px) {
+  .fastui-dialog { width: calc(100% - 16px); max-width: calc(100% - 16px); max-height: calc(100dvh - max(8px, env(safe-area-inset-top, 0px)) - max(8px, env(safe-area-inset-bottom, 0px))); margin: auto; overscroll-behavior: contain; overflow-wrap: anywhere; }
+  .fastui-dialog > :where(header, footer), .fastui-modal-body { padding: 16px; }
+  .fastui-dialog > footer { flex-wrap: wrap; padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); }
+  .fastui-dialog > footer > .fastui-button { flex: 1 1 120px; }
+  .fastui-toolbar, .fastui-statusbar { gap: 6px; padding-inline: 8px; }
+  .fastui-toolbar > *, .fastui-statusbar > *, .fastui-panel-header > *, .fastui-list-row > * { min-width: 0; }
+  .fastui-statusbar, .fastui-list-row { overflow-wrap: anywhere; }
+  .fastui-alert, .fastui-empty { padding: 12px; overflow-wrap: anywhere; }
+  .fastui-canvas { padding: 12px; }
 }

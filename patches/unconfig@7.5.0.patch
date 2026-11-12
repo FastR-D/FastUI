@@ -1,0 +1,8 @@
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -7,3 +7,3 @@
+ declare function createConfigLoader<T>(options: LoadConfigOptions): {
+-  load: quansync$1.QuansyncFn<LoadConfigResult<T>, [force?: Args[0] | undefined]>;
++  load: quansync$1.QuansyncFn<LoadConfigResult<T>, [force?: boolean | undefined]>;
+   findConfigs: quansync$1.QuansyncFn<string[], []>;

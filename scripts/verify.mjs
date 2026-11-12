@@ -123,7 +123,7 @@ try {
   // resolve installed tarballs, never package source aliases.
   process.env.NODE_ENV = 'development'
   for (const framework of ['react', 'react18']) {
-    const server = await createServer({ configFile: false, root: join(work, framework), server: { host: '127.0.0.1', port: 4273 + devServers.length } })
+    const server = await createServer({ configFile: join(work, framework, 'vite.config.ts'), root: join(work, framework), server: { host: '127.0.0.1', port: 4273 + devServers.length } })
     await server.listen()
     devServers.push(server)
     urls[`${framework}-dev`] = `http://127.0.0.1:${server.httpServer.address().port}`

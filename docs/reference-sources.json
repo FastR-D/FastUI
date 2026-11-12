@@ -52,5 +52,67 @@
       "license_file": "LICENSE",
       "license": "MIT"
     }
-  ]
+  ],
+  "product_references": [
+    {
+      "name": "FastWrite",
+      "role": "visual baseline",
+      "recorded_date": "2026-11-12",
+      "commit": "3f99d405f990af6d177f4affb316da5c8c25a0c9",
+      "files": [
+        {
+          "path": "apps/web/src/styles/tokens.css",
+          "sha256": "e19718fff23d664374125fdc6dd46047cd7eab847b5657fba9a82d139946cc02"
+        },
+        {
+          "path": "apps/web/src/styles.css",
+          "sha256": "6c8910983586a42795c78bf1a7cbc9b4faccbd38fd04fddd227c05530c0e5fe4"
+        }
+      ]
+    },
+    {
+      "name": "FastPPT",
+      "recorded_date": "2026-11-12",
+      "commit": "f6bf21f13445c2507719928fa68550552a8fcab2",
+      "files": [
+        {
+          "path": "packages/components/src/tokens.css",
+          "sha256": "89c98abedace8c0bc1824d177e76f1c94cc3904209d7c5d4b00a541aa8a8af2b"
+        },
+        {
+          "path": "packages/components/src/styles.css",
+          "sha256": "e32682be78b5a01a7504e7f9514324785a4dc8d079d23801faeef6e800768c4c"
+        }
+      ],
+      "role": "component-pattern reference; downstream visual alignment target"
+    },
+    {
+      "name": "FastFigure",
+      "recorded_date": "2026-11-12",
+      "commit": "17ae9a40647013358f8f5a8d7c3fa1e7ea3fbfad",
+      "files": [
+        {
+          "path": "src/styles/workspace.css",
+          "sha256": "e29be302dc08322e0e2243450e60c68b036d7a14e4180f759cd3b779fc52c3ad"
+        },
+        {
+          "path": "src/components/ui/tokens.css",
+          "sha256": "913b794d259e3ce95509f46e2ca96e51e5ffa137dc06e1edf21fcaf1931b25a8"
+        },
+        {
+          "path": "src/components/ui/styles.css",
+          "sha256": "4e6dc0ccfdfcd82bb92ac56a25e526d8d9185011daf7e7872a9672614b983fcb"
+        }
+      ],
+      "role": "component-pattern reference; downstream visual alignment target"
+    }
+  ],
+  "design_baseline": {
+    "recorded_date": "2026-11-12",
+    "authority": [
+      "Original FastUI foundation tokens and controls",
+      "FastWrite workbench"
+    ],
+    "rule": "FastPPT and FastFigure contribute component patterns; their visual styling should converge on the FastWrite baseline."
+  }
 }

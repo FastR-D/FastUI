@@ -13,7 +13,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ControlSize
   loading?: boolean
 }
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+export const Button = /* @__PURE__ */ forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = 'secondary', size = 'sm', loading, disabled, type = 'button', className, ...props }, ref,
 ) {
   return <button {...props} ref={ref} type={type} disabled={disabled || loading} aria-busy={loading || undefined}
@@ -23,19 +23,19 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   size?: ControlSize
   htmlSize?: number
 }
-export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
+export const TextField = /* @__PURE__ */ forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   { size = 'md', htmlSize, className, ...props }, ref,
 ) {
   return <input {...props} ref={ref} size={htmlSize} className={classes('fastui-input', `fastui-input--${size}`, className)} />
 })
-export const TextArea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function TextArea(
+export const TextArea = /* @__PURE__ */ forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function TextArea(
   { className, ...props }, ref,
 ) { return <textarea {...props} ref={ref} className={classes('fastui-textarea', className)} /> })
-export const Checkbox = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>>(function Checkbox(
+export const Checkbox = /* @__PURE__ */ forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>>(function Checkbox(
   { className, ...props }, ref,
 ) { return <input {...props} type="checkbox" ref={ref} className={classes('fastui-input', className)} /> })
 export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> { size?: ControlSize }
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+export const Select = /* @__PURE__ */ forwardRef<HTMLSelectElement, SelectProps>(function Select(
   { size = 'md', className, ...props }, ref,
 ) { return <select {...props} ref={ref} className={classes('fastui-select', `fastui-select--${size}`, className)} /> })
 
@@ -48,7 +48,7 @@ export interface DialogProps extends Omit<DialogHTMLAttributes<HTMLDialogElement
   dismissible?: boolean
 }
 const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
-export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(function Dialog(
+export const Dialog = /* @__PURE__ */ forwardRef<HTMLDialogElement, DialogProps>(function Dialog(
   { open, onClose, label, labelledby, size = 'md', dismissible = true, className,
     onCancel, onClick, onPointerDown, ...props }, forwardedRef,
 ) {

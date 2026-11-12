@@ -24,7 +24,7 @@ export interface ModalProps {
   size?: 'md' | 'lg' | 'xl'
   dismissible?: boolean
 }
-export const Modal = defineComponent({
+export const Modal = /* @__PURE__ */ defineComponent({
   name: 'Modal', inheritAttrs: false,
   props: {
     open: { type: Boolean, required: true }, label: String, labelledby: String,
@@ -61,22 +61,25 @@ export interface SelectProps extends Omit<SelectHTMLAttributes, 'value' | 'size'
   onChange?: (value: string) => void
 }
 /** Native select provides keyboard navigation, typeahead and mobile pickers. */
-export const Select: FunctionalComponent<SelectProps> = (props, { attrs }) =>
-  h('select', mergeProps(attrs, {
-    class: ['fastui-select', `fastui-select--${props.size ?? 'md'}`],
-    value: props.options.some(option => option.value === props.value) ? props.value : '',
-    disabled: props.disabled,
-    onChange: (event: Event) => {
-      const value = (event.target as HTMLSelectElement).value
-      if (value !== props.value) props.onChange?.(value)
-    },
-  }), [
-    ...(props.options.some(option => option.value === props.value) ? [] : [h('option', { value: '', disabled: true }, props.placeholder ?? '')]),
-    ...props.options.map(option => h('option', { key: option.value, value: option.value, disabled: option.disabled }, option.label)),
-  ])
-Select.props = {
-  value: String, options: { type: Array as PropType<readonly SelectItem[]>, required: true },
-  placeholder: String, size: String as PropType<ControlSize>, disabled: Boolean,
-  onChange: Function as PropType<(value: string) => void>,
-}
-Select.inheritAttrs = false
+export const Select = /* @__PURE__ */ (() => {
+  const Select: FunctionalComponent<SelectProps> = (props, { attrs }) =>
+    h('select', mergeProps(attrs, {
+      class: ['fastui-select', `fastui-select--${props.size ?? 'md'}`],
+      value: props.options.some(option => option.value === props.value) ? props.value : '',
+      disabled: props.disabled,
+      onChange: (event: Event) => {
+        const value = (event.target as HTMLSelectElement).value
+        if (value !== props.value) props.onChange?.(value)
+      },
+    }), [
+      ...(props.options.some(option => option.value === props.value) ? [] : [h('option', { value: '', disabled: true }, props.placeholder ?? '')]),
+      ...props.options.map(option => h('option', { key: option.value, value: option.value, disabled: option.disabled }, option.label)),
+    ])
+  Select.props = {
+    value: String, options: { type: Array as PropType<readonly SelectItem[]>, required: true },
+    placeholder: String, size: String as PropType<ControlSize>, disabled: Boolean,
+    onChange: Function as PropType<(value: string) => void>,
+  }
+  Select.inheritAttrs = false
+  return Select
+})()

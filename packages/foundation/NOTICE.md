@@ -29,8 +29,16 @@ FastUI is an MIT-licensed design foundation and component library extracted from
 shared interface work in FastR-D products. Product data, authentication, assets
 and application workflows are not included.
 
-The design aligns with the 2026-11-11 FastWrite workbench: compact geometry,
-semantic light/dark colors, typography, flat tabs, project lists and focus states.
+The visual authority remains the original FastUI foundation and FastWrite
+workbench: semantic light/dark colors, typography, compact geometry, filled
+secondary buttons, flat tabs, project lists and focus states.
+
+The 2026-11-12 editor additions reference FastPPT / FastFigure component
+organization and interaction only. Activity navigation, asset cards, native
+inspector disclosures and a grid canvas inherit the same FastUI tokens. FastPPT
+and FastFigure are downstream targets for visual convergence on FastWrite.
+Reference revisions and file fingerprints are in docs/reference-sources.json;
+no product assets, canvas logic or business workflows are included.
 
 Design research used the fixed checkouts in FastWrite/reference:
 

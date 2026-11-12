@@ -1,6 +1,6 @@
 {
   "name": "@fastrd/ui-foundation",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Scoped design tokens, native controls and color mode for FastUI",
   "type": "module",
   "license": "MIT",
@@ -31,6 +31,18 @@
     "./controls.css": "./dist/controls.css",
     "./mdui.css": "./dist/mdui.css",
     "./tokens.json": "./tokens.json",
-    "./color-mode.js": "./dist/color-mode.js"
+    "./color-mode.js": "./dist/color-mode.js",
+    "./uno": {
+      "types": "./dist/uno.d.ts",
+      "import": "./dist/uno.js"
+    }
+  },
+  "peerDependencies": {
+    "unocss": "^66.12.0"
+  },
+  "peerDependenciesMeta": {
+    "unocss": {
+      "optional": true
+    }
   }
 }

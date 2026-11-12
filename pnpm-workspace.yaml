@@ -4,3 +4,7 @@ packages:
 linkWorkspacePackages: true
 onlyBuiltDependencies:
   - esbuild
+
+# Match unconfig's runtime boolean parameter while preserving strict type checks.
+patchedDependencies:
+  unconfig@7.5.0: patches/unconfig@7.5.0.patch

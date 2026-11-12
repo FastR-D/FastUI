@@ -7,8 +7,8 @@
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
-    "@fastrd/ui-foundation": "0.2.0",
-    "@fastrd/ui-vue": "0.2.0",
+    "@fastrd/ui-foundation": "0.3.0",
+    "@fastrd/ui-vue": "0.3.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {
@@ -16,6 +16,12 @@
     "typescript": "~5.7.3",
     "vue-tsc": "~2.2.0",
     "@vitejs/plugin-vue": "^5.2.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "unocss": "66.12.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "unconfig@7.5.0": "patches/unconfig@7.5.0.patch"
+    }
   }
 }

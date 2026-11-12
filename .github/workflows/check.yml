@@ -20,6 +20,7 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm verify
       - run: pnpm test:release
+      - run: pnpm test:tree-shaking
       - uses: actions/upload-artifact@v4
         if: always()
         with:

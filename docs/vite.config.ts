@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
+import UnoCSS from 'unocss/vite'
 import { fileURLToPath } from 'node:url'
 export default defineConfig({
+  plugins: [UnoCSS()],
   root: fileURLToPath(new URL('.', import.meta.url)),
   // configure-pages returns a base_path without a trailing slash. HTML
   // %BASE_URL% replacements need it when followed by a public asset path.
