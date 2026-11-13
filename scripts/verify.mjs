@@ -7,6 +7,7 @@ import { chromium } from '@playwright/test'
 import { runWorkbenchScenarios } from '../tests/workbench.mjs'
 import { runScenarios } from '../tests/browser.mjs'
 import { runDialogRegressions } from '../tests/dialog-regressions.mjs'
+import { runContentScenarios } from '../tests/content.mjs'
 import { releaseFixture } from '../tests/release-fixture.mjs'
 import './check-registry.mjs'
 
@@ -129,7 +130,7 @@ try {
     urls[`${framework}-dev`] = `http://127.0.0.1:${server.httpServer.address().port}`
   }
   browser = await chromium.launch({ headless: true })
-  const scenarios = [...await runWorkbenchScenarios(browser, urls), ...await runDialogRegressions(browser, urls, artifacts), ...await runScenarios(browser, urls, artifacts)]
+  const scenarios = [...await runWorkbenchScenarios(browser, urls), ...await runDialogRegressions(browser, urls, artifacts), ...await runContentScenarios(browser, urls), ...await runScenarios(browser, urls, artifacts)]
   for (const pkg of publicPackages) {
     const downloads = fixture.requests.filter(request => request.kind === 'tarball' && request.name === pkg.name)
     const expected = pkg.name === foundationManifest.name ? 5 : pkg.name === '@fastrd/ui-react' ? 3 : 2

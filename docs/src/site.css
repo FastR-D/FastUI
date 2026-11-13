@@ -1,5 +1,5 @@
 * { box-sizing: border-box; }
-:root { font-family: var(--fastui-font); font-synthesis: none; color: var(--fastui-text); background: var(--fastui-surface); }
+:root { font-family: var(--fastui-font); font-synthesis: none; color: var(--fastui-text); background: var(--fastui-surface); color-scheme: var(--fastui-color-scheme); scrollbar-width: thin; scrollbar-color: var(--fastui-border-strong) transparent; }
 body { margin: 0; font-size: 14px; line-height: 1.75; font-weight: var(--fastui-font-weight); }
 a { color: var(--fastui-primary); text-underline-offset: 3px; }
 [data-fastui-theme=dark] a { color: var(--fastui-focus); }
@@ -15,10 +15,11 @@ li { margin-bottom: 10px; color: var(--fastui-secondary); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip-link { position: fixed; z-index: 50; top: -80px; left: 16px; padding: 8px 14px; background: var(--fastui-surface); }
 .skip-link:focus { top: 8px; }
-.site-header { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 32px; position: sticky; top: 0; z-index: 20; background: var(--fastui-surface); border-bottom: 1px solid var(--fastui-border); }
+.site-header { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 32px; position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--fastui-surface) 88%, transparent); backdrop-filter: blur(16px); border-bottom: 1px solid var(--fastui-border); }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--fastui-text); text-decoration: none; font-size: 19px; font-weight: 600; letter-spacing: -.04em; }
 .brand-mark { display: block; width: 28px; height: 28px; flex: 0 0 28px; }
-.version { font-size: 11px; letter-spacing: 0; padding: 0 5px; border: 1px solid var(--fastui-border); border-radius: 4px; color: var(--fastui-muted); margin-left: 2px; }
+[data-fastui-theme=dark] .brand { color: var(--fastui-text); }
+.version { font-size: 11px; letter-spacing: 0; padding: 0 5px; border: 1px solid var(--fastui-border); border-radius: 999px; color: var(--fastui-secondary); background: var(--fastui-page); margin-left: 2px; }
 .header-right { display: flex; align-items: center; gap: 24px; }
 .header-right > a { font-size: 12px; color: var(--fastui-secondary); text-decoration: none; }
 .site-shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); max-width: 1440px; margin: 0 auto; }
@@ -26,9 +27,9 @@ li { margin-bottom: 10px; color: var(--fastui-secondary); }
 .search-label { font-size: 11px; color: var(--fastui-muted); display: grid; gap: 6px; margin-bottom: 10px; }
 .search-label input { width: 100%; font-size: 12px; }
 .nav-group { display: block; font-size: 11px; color: var(--fastui-muted); margin: 22px 10px 8px; }
-.sidebar nav a { display: block; padding: 7px 10px; font-size: 13px; color: var(--fastui-secondary); text-decoration: none; border-radius: 4px; margin-bottom: 2px; }
+.sidebar nav a { display: block; padding: 8px 12px; font-size: 13px; color: var(--fastui-secondary); text-decoration: none; border-radius: 8px; margin-bottom: 4px; transition: background-color var(--fastui-duration-fast) var(--fastui-ease); }
 .sidebar nav a:hover { background: var(--fastui-hover); }
-.sidebar nav a[aria-current=page] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
+.sidebar nav a[aria-current=page] { background: var(--fastui-selected); color: var(--fastui-selected-text); font-weight: 600; }
 .sidebar-footer { font-size: 11px; color: var(--fastui-secondary); border-top: 1px solid var(--fastui-border); padding: 18px 10px 0; margin-top: auto; }
 .sidebar-footer span { color: var(--fastui-muted); }
 main { padding: 42px clamp(24px, 5vw, 76px) 24px; width: 100%; max-width: 1096px; min-width: 0; outline: none; }
@@ -37,24 +38,24 @@ main { padding: 42px clamp(24px, 5vw, 76px) 24px; width: 100%; max-width: 1096px
 .page-intro { padding-bottom: 28px; border-bottom: 1px solid var(--fastui-border); margin-bottom: 30px; }
 .page-intro p { font-size: 15px; max-width: 650px; margin-bottom: 0; }
 .eyebrow { font-size: 10px; letter-spacing: .1em; color: var(--fastui-muted); }
-.intro-note { padding: 26px 28px; background: var(--fastui-page); border: 1px solid var(--fastui-border); border-radius: 6px; }
+.intro-note { padding: 26px 28px; background: var(--fastui-page); border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); }
 .intro-note h2 { font-size: 26px; margin: 12px 0; line-height: 1.4; }
 .intro-note p { max-width: 570px; }
 .intro-note .row { margin-top: 24px; }
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.package-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 32px 0 40px; }
-.package-grid > div { padding: 0 20px; border-right: 1px solid var(--fastui-border); }
-.package-grid > div:first-child { padding-left: 0; }
-.package-grid > div:last-child { border: 0; padding-right: 0; }
+.package-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 24px 0 48px; }
+.package-grid > div { padding: 20px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-page); }
+
+
 .package-grid h3 { font-size: 13px; margin: 12px 0 8px; overflow-wrap: anywhere; }
 .package-grid p { font-size: 12px; margin-bottom: 0; }
-.code-block { position: relative; margin: 16px 0 24px; border: 1px solid var(--fastui-border); border-radius: 6px; background: var(--fastui-page); }
+.code-block { position: relative; margin: 16px 0 24px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-page); }
 .code-block > button { position: absolute; top: 8px; right: 8px; }
 pre { padding: 42px 20px 20px; margin: 0; max-width: 100%; overflow: auto; font-size: 12px; line-height: 1.9; }
 .example { margin-bottom: 32px; min-width: 0; }
 .example-heading h2 { margin-top: 28px; margin-bottom: 4px; }
 .example-heading p { font-size: 12px; margin-bottom: 14px; }
-.example-preview { padding: 24px; border: 1px solid var(--fastui-border); border-radius: 6px; background: var(--fastui-surface); min-width: 0; }
+.example-preview { padding: 24px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); min-width: 0; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .form-grid input, .form-grid select { width: 100%; }
 .demo-frame { border: 1px solid var(--fastui-border); border-radius: 4px; overflow: hidden; }
@@ -72,7 +73,7 @@ pre { padding: 42px 20px 20px; margin: 0; max-width: 100%; overflow: auto; font-
 .swatch > div { height: 64px; border: 1px solid var(--fastui-border); border-radius: 4px; }
 .swatch code { display: block; margin-top: 8px; font-size: 10px; overflow-wrap: anywhere; }
 .swatch span { display: block; font-size: 10px; color: var(--fastui-muted); }
-.type-sample { padding: 24px; border: 1px solid var(--fastui-border); }
+.type-sample { padding: 24px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); }
 .type-sample h3 { font-size: 23px; font-weight: 500; }
 .type-sample code { font-size: 12px; overflow-wrap: anywhere; }
 .project-browser .fastui-toolbar input { flex: 1; min-width: 100px; }
@@ -83,7 +84,7 @@ pre { padding: 42px 20px 20px; margin: 0; max-width: 100%; overflow: auto; font-
 .project-name strong { font-weight: 500; overflow-wrap: anywhere; }
 .project-name span { color: var(--fastui-muted); font: 11px var(--fastui-font-mono); margin-top: 4px; }
 .project-date { color: var(--fastui-muted); font-size: 11px; }
-.ai-surface { padding: 20px; border-radius: 6px; background: var(--fastui-ai-soft); color: var(--fastui-ai); }
+.ai-surface { padding: 20px; border-radius: var(--fastui-radius-panel); background: var(--fastui-ai-soft); color: var(--fastui-ai); }
 .ai-surface h3 { margin-top: 16px; }
 .ai-surface p { color: inherit; margin-bottom: 0; }
 .reference-list section { border-bottom: 1px solid var(--fastui-border); padding: 8px 0 16px; }
@@ -94,7 +95,7 @@ pre { padding: 42px 20px 20px; margin: 0; max-width: 100%; overflow: auto; font-
 .page-footer a { color: var(--fastui-secondary); }
 .menu-toggle { display: none; }
 @media (min-width: 1440px) { .site-shell { border-right: 1px solid var(--fastui-border); } }
-@media (max-width: 900px) { .site-shell { grid-template-columns: 200px minmax(0, 1fr); } main { padding: 32px 24px; } .sidebar { padding-left: 16px; padding-right: 16px; } .package-grid { grid-template-columns: 1fr; gap: 18px; } .package-grid > div { padding: 0 0 16px; border-right: 0; border-bottom: 1px solid var(--fastui-border); } .swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .site-shell { grid-template-columns: 200px minmax(0, 1fr); } main { padding: 32px 24px; } .sidebar { padding-left: 16px; padding-right: 16px; } .package-grid { grid-template-columns: 1fr; gap: 18px; } .package-grid > div { padding: 20px; } .swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 680px) {
   .site-header { height: 56px; padding: 0 16px; gap: 10px; }
   .brand { gap: 6px; font-size: 17px; }
@@ -116,7 +117,7 @@ pre { padding: 42px 20px 20px; margin: 0; max-width: 100%; overflow: auto; font-
   .fastui-dialog > .fastui-modal-body { padding: 20px 16px; }
 }
 
-/* Editor patterns inherit the original FastUI / FastWrite design tokens. */
+/* Editor patterns share the component library design tokens. */
 .editor-demo { container-type: inline-size; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); overflow: hidden; font-size: 11px; line-height: 1.5; }
 .editor-top { display: flex; align-items: center; gap: 16px; min-height: 44px; padding: 8px 12px; border-bottom: 1px solid var(--fastui-border); background: var(--fastui-surface); color: var(--fastui-muted); }
 .editor-top > .fastui-badge { margin-left: auto; }
@@ -184,3 +185,57 @@ pre { padding: 42px 20px 20px; margin: 0; max-width: 100%; overflow: auto; font-
   .editor-workspace > .fastui-canvas { padding: 12px; }
   .editor-paper { max-width: 260px; }
 }
+
+/* A quiet canvas puts real components at the center of the documentation. */
+.hero { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; overflow: hidden; padding: 40px; background: var(--fastui-page); border-radius: 20px; }
+.hero-copy { position: relative; z-index: 1; }
+.hero-label { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: var(--fastui-secondary); }
+.hero-label > span, .showcase-dot { display: inline-block; width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: var(--fastui-success); }
+.hero h2 { margin: 22px 0 18px; font-size: clamp(36px, 4.5vw, 54px); line-height: 1.2; letter-spacing: -.045em; font-weight: 600; }
+.hero h2 > span { color: var(--fastui-primary); }
+[data-fastui-theme=dark] .hero h2 > span { color: var(--fastui-focus); }
+.hero p { font-size: 13px; line-height: 1.9; }
+.hero .row { gap: 10px; margin-top: 26px; }
+.hero .fastui-button { min-height: max(36px, var(--fastui-touch-target)); padding-inline: 16px; gap: 16px; }
+.hero-meta { margin-top: 24px; color: var(--fastui-muted); font-size: 10px; }
+.hero-meta > span { padding-inline: 6px; }
+.hero-detail { align-self: stretch; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 150px; color: var(--fastui-selected-text); }
+.hero-detail > span { display: grid; place-items: center; width: 130px; height: 150px; border: 1px solid var(--fastui-border); border-radius: 30px; background: var(--fastui-surface); box-shadow: 10px 10px 0 var(--fastui-selected); font-size: 86px; font-weight: 600; line-height: 1; transform: rotate(-8deg); }
+.hero-detail > div { margin-top: 38px; font: 10px/1.8 var(--fastui-font-mono); letter-spacing: .13em; color: var(--fastui-muted); text-align: center; }
+.showcase { margin-top: 28px; padding: 24px; border: 1px solid var(--fastui-border); border-radius: 20px; background: var(--fastui-page); }
+.showcase-caption { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 11px; color: var(--fastui-secondary); }
+.showcase-caption > span:last-child { margin-inline-start: auto; font: 9px var(--fastui-font-mono); letter-spacing: .08em; color: var(--fastui-muted); }
+.showcase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.research-card, .export-card { padding: 24px; box-shadow: var(--fastui-shadow-sm); }
+.research-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.project-symbol { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--fastui-border); border-radius: 10px; color: var(--fastui-selected-text); font-size: 20px; }
+.research-card h3 { font-size: 23px; line-height: 1.5; letter-spacing: -.025em; margin: 12px 0 8px; }
+.research-card p { font-size: 11px; }
+.research-chart { margin-block: 20px; padding: 8px 0; background-image: linear-gradient(var(--fastui-border) 1px, transparent 1px); background-size: 100% 28px; }
+.research-chart svg { display: block; width: 100%; height: 100px; }
+.research-card-footer { display: flex; align-items: center; gap: 12px; margin-top: 18px; color: var(--fastui-muted); font-size: 10px; }
+.avatar-stack { display: flex; padding-inline-start: 5px; }
+.avatar-stack > .fastui-avatar { margin-inline-start: -5px; border: 2px solid var(--fastui-surface); }
+.export-card-heading h3 { font-size: 17px; letter-spacing: -.02em; margin: 12px 0 6px; }
+.export-card-heading p { font-size: 11px; margin-bottom: 22px; }
+.export-card form { display: grid; gap: 16px; }
+.export-card .fastui-input { min-height: max(34px, var(--fastui-touch-target)); }
+.export-card .fastui-segments { display: flex; }
+.export-card .fastui-segment { flex: 1; }
+.export-card .fastui-field { font-size: 11px; }
+.export-card form > .fastui-button { min-height: max(34px, var(--fastui-touch-target)); justify-content: space-between; padding-inline: 14px; }
+.export-feedback { min-height: 32px; margin: -4px 0 0; font-size: 10px; color: var(--fastui-muted); overflow-wrap: anywhere; }
+.showcase-bottom { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 24px; padding-top: 20px; color: var(--fastui-muted); font-size: 10px; }
+.showcase-bottom > span > span { margin-inline-end: 4px; }
+.content-demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.content-demo-grid .fastui-card h3 { margin: 0; }
+.content-demo-grid .fastui-card p { margin: 6px 0 0; font-size: 12px; }
+.content-demo-grid .fastui-card-footer { justify-content: space-between; }
+.preference-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.skeleton-lines { display: grid; gap: 12px; padding-block: 10px; }
+.progress-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; color: var(--fastui-secondary); font-size: 12px; }
+.shortcut-hint { color: var(--fastui-muted); font-size: 12px; }
+@media (max-width: 1100px) { .hero { padding: 28px; } .hero-detail { min-width: 110px; } .hero-detail > span { width: 100px; height: 120px; font-size: 72px; } .research-card, .export-card { padding: 18px; } }
+@media (max-width: 900px) { .hero-detail { display: none; } .showcase { padding: 16px; } .showcase-grid, .content-demo-grid { grid-template-columns: 1fr; } .research-chart svg { height: 90px; } }
+@media (max-width: 680px) { .hero { padding: 24px; } .hero h2 { font-size: 40px; } .hero p { font-size: 12px; } .showcase-caption > span:last-child { display: none; } .showcase-bottom { justify-content: flex-start; gap: 10px 16px; } }
+@media (prefers-reduced-motion: reduce) { .sidebar nav a { transition: none; } }

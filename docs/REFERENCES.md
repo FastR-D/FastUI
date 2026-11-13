@@ -2,8 +2,9 @@
 
 ## 视觉基准：原版 FastUI / FastWrite
 
-原版 FastUI 与 FastWrite 是配色、排版、尺寸、圆角、按钮外观与焦点状态的主依据。
-保留 24 / 25 / 28px 紧凑控件、32px 舒适密度、4 / 6 / 8px 圆角及灰色填充次按钮。
+FastUI / FastWrite 是配色、排版和紧凑密度的基础。
+保留 24 / 25 / 28px 紧凑控件、32px 舒适密度及灰色填充次按钮。
+2026-11-13 参考 HeroUI 更新表面层级、圆角与状态反馈，详见下文。
 FastPPT / FastFigure 后续向这套视觉规范统一，不反向覆盖 FastUI 的基础样式。
 
 对齐依据：2026-11-11 FastWrite 工作区当前的 `apps/web/src/styles.css`、
@@ -41,3 +42,17 @@ FastUI / FastWrite 的语义色、字体与圆角。网格点和滚动条引用�
 不另建产品色板。布局、缩放、拖放及产品业务由宿主负责。
 本次仅更新 FastUI，没有修改 FastWrite / FastPPT / FastFigure。读取时的 HEAD 与文件
 SHA-256 在 reference-sources.json 的 product_references 中，design_baseline 明确记录视觉优先级。
+
+## HeroUI 视觉与内容组件参考（2026-11-13）
+
+参考 [HeroUI 仓库](https://github.com/heroui-inc/heroui)，v3 分支
+`8037a0198427faf1c1d09c6eb9e7bd09290ea3e2`（Apache-2.0），以及官方
+[设计原则](https://heroui.com/en/docs/react/getting-started/design-principles)、
+[主题](https://heroui.com/en/docs/react/getting-started/theming)、
+[Card](https://heroui.com/en/docs/react/components/card) 和
+[Switch](https://heroui.com/en/docs/react/components/switch) 文档。
+
+采用语义层级、柔和表面、可组合内容与显式状态反馈的思路：按钮保留 4px，输入框／面板／弹窗使用 8 / 12 / 16px
+圆角、主题阴影、柔和标签和浮起的分段选项。新增 Card 组合部件、Avatar、Switch、
+Skeleton、Kbd，并统一两端的原生 Progress。React / Vue / HTML 共用自有样式，
+不复制 HeroUI 源码、不引入其运行时依赖。原有蓝灰色板、紧凑密度和键盘行为继续保留。

@@ -47,3 +47,13 @@ close focus restoration, empty state, and controlled segmented status.
 React/Vue consumers use UnoCSS; removed framework styles.css paths are rejected.
 Static HTML retains foundation tokens.css/controls.css. Example-local unconfig
 declaration patches preserve skipLibCheck=false without changing runtime code.
+
+Content regressions cover React 18/19 and Vue: Card composition, Switch Space
+activation, disabled state, native FormData and uncontrolled reset, forwarded
+React input refs, explicit progress bounds and indeterminate values, avatar
+image failure/recovery and initials, RTL thumb placement, Skeleton reduced
+motion and forced-color focus. Documentation scenarios also exercise both
+frameworks, boolean v-model, 44px touch switches, the interactive export preview,
+all routes at 320–1440px and the original 4px button corners in both themes.
+UnoCSS tests verify each new component's styles and keep Skeleton/Progress
+keyframes exclusive to their respective component families.

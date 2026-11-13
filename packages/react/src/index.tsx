@@ -113,3 +113,4 @@ export function Loading({ label = 'Loading', className, ...props }: HTMLAttribut
 }
 
 export * from './workbench.js'
+export * from './content.js'

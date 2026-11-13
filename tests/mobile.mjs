@@ -16,7 +16,7 @@ export async function runMobileScenarios(browser, url, artifacts) {
       await page.setViewportSize({ width, height })
       for (const mode of ['light', 'dark']) {
         await page.getByRole('combobox', { name: '颜色模式' }).selectOption(mode)
-        for (const route of ['start', 'design', 'components', 'patterns']) {
+        for (const route of ['start', 'design', 'components', 'content', 'patterns']) {
           await page.goto(`${url}#/${route}`)
           await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
           expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `touch overflow ${width}/${height}/${mode}/${route}`).toBe(true)
@@ -41,6 +41,16 @@ export async function runMobileScenarios(browser, url, artifacts) {
     await page.getByRole('button', { name: '关闭 notes.md' }).tap()
     await expect(source).toBeFocused()
     results.push('touch-react-vue-tap-tabs-close-focus')
+    await page.goto(`${url}#/content`)
+    for (const framework of ['react', 'vue']) {
+      const toggle = page.getByTestId(`${framework}-content`).getByRole('switch', { name: '自动保存', exact: true })
+      await expect(toggle).toHaveCSS('width', '44px')
+      await expect(toggle).toHaveCSS('height', '44px')
+      await toggle.tap()
+      await expect(toggle).not.toBeChecked()
+    }
+    results.push('touch-react-vue-switch-targets-and-tap')
+    await page.goto(`${url}#/components`)
     for (const framework of ['react', 'vue']) {
       const trigger = framework === 'react' ? create : vue.getByRole('button', { name: 'Vue 设置' })
       await trigger.tap()

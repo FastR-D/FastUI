@@ -29,9 +29,13 @@ FastUI is an MIT-licensed design foundation and component library extracted from
 shared interface work in FastR-D products. Product data, authentication, assets
 and application workflows are not included.
 
-The visual authority remains the original FastUI foundation and FastWrite
-workbench: semantic light/dark colors, typography, compact geometry, filled
-secondary buttons, flat tabs, project lists and focus states.
+The palette, typography and compact geometry derive from FastUI / FastWrite.
+The 2026-11-13 visual refinement references HeroUI semantic hierarchy, surface
+treatment and content composition. Card, Avatar, Switch, Progress, Skeleton and
+Kbd are original cross-framework implementations; no HeroUI source or runtime
+dependency is included. HeroUI (heroui-inc/heroui), Apache-2.0, v3 revision
+8037a0198427faf1c1d09c6eb9e7bd09290ea3e2, was consulted alongside its official
+design-principles, theming, card and switch documentation.
 
 The 2026-11-12 editor additions reference FastPPT / FastFigure component
 organization and interaction only. Activity navigation, asset cards, native

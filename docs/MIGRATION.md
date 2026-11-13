@@ -1,3 +1,31 @@
+# 升级到 0.4.0
+
+三个包统一升级到 0.4.0，React / Vue 精确依赖 foundation 0.4.0。
+0.3.0 的 UnoCSS 接入方式继续使用，无需增加运行时依赖。
+
+## 视觉更新与内容组件
+
+按钮圆角保持 4px（独立变量 `radius-button`）。输入框／面板／弹窗圆角由 4 / 6 / 8px
+更新为 8 / 12 / 16px；控件尺寸、颜色语义和既有组件接口保留。
+新增主题变量 `shadow-sm`、`shadow-overlay`，标签改用柔和填充，分段选项使用表面与轻阴影。
+需要旧圆角的产品可在容器覆写：
+
+```css
+.legacy-workbench {
+  --fastui-radius-control: 4px;
+  --fastui-radius-panel: 6px;
+  --fastui-radius-overlay: 8px;
+}
+```
+
+新增 Card / CardHeader / CardBody / CardFooter、Avatar、Switch、Skeleton、Kbd；
+React 新增 Progress，Vue Progress 保留原生属性与插槽并支持 label / tone。
+Switch 使用原生 checkbox，React 支持 checked / defaultChecked，Vue 支持布尔 v-model。
+Progress 的 value 缺省表示不确定进度，max 缺省为 100；此前 Vue 使用原生 max 缺省值 1
+的项目应显式设置 max=1。完整示例见文档「卡片与状态」。
+
+---
+
 # 升级到 0.3.0
 
 三个包统一升级到 0.3.0，框架包精确依赖 foundation 0.3.0。

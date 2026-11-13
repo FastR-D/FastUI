@@ -8,6 +8,7 @@ export function styleFamily(className) {
   if (/^inspector-/.test(name)) return 'inspector'
   if (/^asset-/.test(name)) return 'asset'
   if (/^tone-/.test(name)) return 'tone'
+  if (/^card(?:-|$)/.test(name)) return 'card'
   if (name === 'modal-body') return 'dialog'
   return name
 }
@@ -26,7 +27,10 @@ export function splitStyles(css) {
     const root = source.clone()
     root.walkComments(comment => comment.remove())
     root.walkAtRules(at => {
-      if (/keyframes$/.test(at.name)) { if (family !== 'spinner') at.remove() }
+      if (/keyframes$/.test(at.name)) {
+        const owner = { 'fastui-spin': 'spinner', 'fastui-skeleton': 'skeleton', 'fastui-progress': 'progress' }[at.params]
+        if (family !== owner) at.remove()
+      }
     })
     root.walkRules(rule => {
       if (rule.parent.type === 'atrule' && /keyframes$/.test(rule.parent.name)) return

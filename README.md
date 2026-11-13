@@ -8,7 +8,7 @@
 | `@fastrd/ui-react` | React 18.3 / 19 控件、弹窗、反馈与工作台组件 |
 | `@fastrd/ui-vue` | Vue 3.5 控件、v-model、弹窗、反馈与工作台组件 |
 
-**0.3.0** · 三包版本统一，框架包精确依赖同版本 foundation。
+**0.4.0** · 三包版本统一，框架包精确依赖同版本 foundation。
 
 ## 使用 UnoCSS（推荐）
 
@@ -64,20 +64,21 @@ UnoCSS 不进入组件运行时。
 
 - IBM Plex Sans / Noto Sans SC 字体栈，正文 500、代码 450 字重，提供系统字体回退。
   字体由宿主自托管；组件包不携带字体资源。
-- 24 / 25 / 28px 控件、4 / 6 / 8px 控件／面板／弹窗圆角。
+- 24 / 25 / 28px 紧凑控件；按钮保持 4px，输入框／面板／弹窗使用 8 / 12 / 16px 圆角。
 - 当前蓝／灰语义色及独立状态色、AI 紫色；深色填充按钮保持白字可读。
 - 平直页签、顶部细线、6px 未保存标记、矩形键盘焦点。
 - 新增 TabBar、SegmentedControl、Toolbar、StatusBar、Section、ListRow、Divider；
   Vue 补齐 Alert、Badge、Loading、EmptyState。页签支持方向键、Home / End、RTL、禁用跳过与关闭后焦点恢复。
 - 新增 ActivityRail、PanelHeader、InspectorSection、AssetCard、CanvasSurface，
   提供活动栏、面板标题、原生折叠属性区、素材卡片与网格画布；React / Vue 同步支持。
+- 新增 Card / CardHeader / CardBody / CardFooter、Avatar、Switch、Skeleton、Kbd；React 补齐 Progress，Vue 原生 Progress 同步增强。
 - 使用 FastUI 原生语义变量；MDUI 提供显式局部映射。
 
-视觉基准以原版 FastUI 和 FastWrite 为主：配色、字体、控件密度、圆角、填充次按钮与焦点样式
-均沿用原有规范。FastPPT / FastFigure 仅提供通用组件的组织与交互参考，后续向
+配色、字体与控件密度以 FastUI / FastWrite 为基础；参考 HeroUI 的语义层级与组合方式，
+采用柔和圆角、轻量阴影、胶囊状态标签、浮起分段选项与按压反馈。FastPPT / FastFigure 仅提供通用组件的组织与交互参考，后续向
 FastWrite / FastUI 的规范统一。新增组件直接使用同一套语义变量，不另设产品色板。
 
-0.3.0 包含 UnoCSS 按需样式、JS tree shaking、编辑器组件与移动端适配。
+0.4.0 新增内容组件与更细腻的视觉层次，保留 UnoCSS 按需样式、JS tree shaking 和移动端适配。
 
 ## 开发与验证
 
@@ -99,7 +100,7 @@ workspace 依赖开发，已发布包保持精确的 registry 版本依赖。
 `verify` 打包原始候选 tarball，通过临时 registry 安装进干净的 Vue、React 19、
 React 18.3 和原生 HTML 消费者。每个消费者使用独立 pnpm store，不使用源码 alias，
 类型检查与生产浏览器回归覆盖表单、主题、嵌套弹窗、页签、焦点及响应式布局。
-产物写入 `artifacts/0.3.0/`，包含 62 个场景、构建日志、校验和和截图；发布入口另有 57 项边界测试。
+产物写入 `artifacts/0.4.0/`，包含 65 个场景、构建日志、校验和和截图；发布入口另有 57 项边界测试。
 
 ## 文档站点
 

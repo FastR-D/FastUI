@@ -36,7 +36,7 @@ try {
   await page.getByRole('searchbox', { name: '查找文档' }).fill('不存在的标题')
   await expect(page.getByRole('status', { name: '' }).filter({ hasText: '没有匹配的文档' })).toBeVisible()
   await page.getByRole('searchbox', { name: '查找文档' }).fill('')
-  for (const title of ['色彩与排版', '组件与交互', '项目与工作台', '本地开发', '设计参考', '文档与发布', '介绍与安装']) {
+  for (const title of ['色彩与排版', '组件与交互', '卡片与状态', '项目与工作台', '本地开发', '设计参考', '文档与发布', '介绍与安装']) {
     await page.getByRole('navigation', { name: '文档导航' }).getByRole('link', { name: title, exact: true }).click()
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title)
     await expect(page.locator('main')).toBeFocused()
@@ -45,6 +45,8 @@ try {
   await expect(page.getByRole('heading', { name: '页面未找到' })).toBeVisible()
   results.push('navigation-search-focus-and-not-found')
   await page.goto(`${url}#/components`)
+  // Let the hash route finish its scheduled focus restoration before keyboard input.
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   const source = page.getByRole('tab', { name: 'main.tex' }).first()
   await source.focus()
   await page.keyboard.press('ArrowRight')
@@ -122,7 +124,7 @@ try {
   await expect(editor.getByRole('button', { name: '流程结构' })).toHaveCSS('outline-style', 'solid')
   await page.emulateMedia({ forcedColors: 'none' })
   results.push('editor-primitives-react-vue-selection-keyboard-disclosure-disabled-grid-themes-forced-colors')
-  // Preserve the established FastUI / FastWrite visual contract in both themes.
+  // Preserve the workbench palette, compact heights and original button corners in both themes.
   for (const [mode, primary, secondary] of [
     ['light', 'rgb(21, 95, 184)', 'rgb(239, 241, 244)'],
     ['dark', 'rgb(14, 99, 156)', 'rgb(42, 53, 67)'],
@@ -135,10 +137,44 @@ try {
     await expect(primaryButton).toHaveCSS('min-height', '25px')
     await expect(primaryButton).toHaveCSS('border-radius', '4px')
     await expect(page.getByRole('textbox', { name: '项目名称', exact: true })).toHaveCSS('min-height', '28px')
-    await expect(editor.getByRole('button', { name: '趋势图表' })).toHaveCSS('border-radius', '6px')
+    await expect(editor.getByRole('button', { name: '趋势图表' })).toHaveCSS('border-radius', '12px')
   }
-  results.push('fastwrite-original-palette-filled-secondary-compact-geometry')
+  results.push('workbench-palette-compact-geometry-original-button-corners')
 
+
+  await page.goto(`${url}#/start`)
+  await page.getByRole('button', { name: 'SVG', exact: true }).click()
+  await page.getByRole('textbox', { name: '文档名称' }).fill('研究成果')
+  await page.getByRole('button', { name: '预览导出' }).click()
+  await expect(page.getByRole('status').filter({ hasText: '预览已就绪：研究成果.svg' })).toBeVisible()
+  await page.getByRole('checkbox', { name: '包含参考文献' }).uncheck()
+  await expect(page.getByRole('status').filter({ hasText: '预览已就绪' })).toHaveCount(0)
+  await page.goto(`${url}#/content`)
+  for (const framework of ['react', 'vue']) {
+    const root = page.getByTestId(`${framework}-content`)
+    const autosave = root.getByRole('switch', { name: '自动保存', exact: true })
+    await expect(autosave).toBeChecked()
+    expect(await root.locator('form').evaluate(form => new FormData(form).get('autosave'))).toBe('on')
+    await autosave.focus()
+    await page.keyboard.press('Space')
+    await expect(autosave).not.toBeChecked()
+    await expect(root.getByRole('status').filter({ hasText: '已切换为手动保存' })).toBeVisible()
+    expect(await root.locator('form').evaluate(form => new FormData(form).has('autosave'))).toBe(false)
+    await expect(root.getByRole('switch', { name: '云端同步' })).toBeDisabled()
+    await root.getByRole('button', { name: '继续整理' }).click()
+    await expect(root.getByRole('progressbar', { name: '文档整理进度' })).toHaveJSProperty('value', 68)
+    await root.getByRole('button', { name: '继续整理' }).click()
+    await expect(root.getByRole('progressbar', { name: '文档整理进度' })).toHaveJSProperty('value', 100)
+    await root.getByRole('button', { name: '重新开始' }).click()
+    await expect(root.getByRole('progressbar', { name: '文档整理进度' })).toHaveJSProperty('value', 0)
+    await expect(root.locator('.fastui-skeleton').first()).toHaveCSS('animation-name', 'none')
+    await expect(root.locator('.fastui-skeleton').first()).toHaveAttribute('aria-hidden', 'true')
+    await root.getByRole('switch', { name: '显示加载占位' }).uncheck()
+    await expect(root.getByRole('img', { name: 'Ada Lovelace' })).toHaveText('AL')
+    await expect(root.getByText('内容已就绪，可以开始阅读。')).toBeVisible()
+    await expect(root.locator('.fastui-skeleton')).toHaveCount(0)
+  }
+  results.push('hero-showcase-and-react-vue-card-switch-form-progress-skeleton-avatar-kbd')
 
   await page.goto(`${url}#/patterns`)
   await expect(page.getByRole('status').filter({ hasText: '3 个项目' })).toBeVisible()
@@ -164,12 +200,12 @@ try {
     await page.setViewportSize({ width, height: 1000 })
     for (const mode of ['light', 'dark']) {
       await page.getByRole('combobox', { name: '颜色模式' }).selectOption(mode)
-      for (const route of ['start', 'design', 'components', 'patterns', 'references', 'development', 'deploy']) {
+      for (const route of ['start', 'design', 'components', 'content', 'patterns', 'references', 'development', 'deploy']) {
         await page.goto(`${url}#/${route}`)
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route}/${mode}/${width} overflow`).toBe(true)
         // Capture the representative routes while checking every page for overflow.
-        if (['start', 'components', 'patterns'].includes(route)) await page.screenshot({ path: resolve(artifacts, `${route}-${mode}-${width}.png`), fullPage: true })
+        if (['start', 'components', 'content', 'patterns'].includes(route)) await page.screenshot({ path: resolve(artifacts, `${route}-${mode}-${width}.png`), fullPage: true })
       }
     }
   }

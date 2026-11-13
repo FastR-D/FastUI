@@ -2,6 +2,7 @@ import { StrictMode, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { WorkbenchCases } from './WorkbenchCases'
 import { DialogCases } from './DialogCases'
+import { ContentCases } from './ContentCases'
 import { initColorMode } from '@fastrd/ui-foundation'
 import { Button, TextField, TextArea, Checkbox, Select, Dialog, Alert, Badge, EmptyState, Loading } from '@fastrd/ui-react'
 import 'virtual:uno.css'
@@ -40,4 +41,4 @@ function App() {
     <Dialog open={locked} onClose={()=>setLocked(false)} dismissible={false} label="Locked settings"><div className="fastui-modal-body"><Button onClick={()=>setLocked(false)}>Unlock</Button></div></Dialog>
   </main>
 }
-createRoot(document.getElementById('app')!).render(<StrictMode>{new URLSearchParams(location.search).has('dialog-case') ? <DialogCases /> : <App />}</StrictMode>)
+createRoot(document.getElementById('app')!).render(<StrictMode>{new URLSearchParams(location.search).has('content-case') ? <ContentCases /> : new URLSearchParams(location.search).has('dialog-case') ? <DialogCases /> : <App />}</StrictMode>)

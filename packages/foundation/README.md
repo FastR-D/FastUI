@@ -1,6 +1,6 @@
 # @fastrd/ui-foundation
 
-MIT · 0.3.0 · Framework-independent ESM, types and explicitly imported CSS.
+MIT · 0.4.0 · Framework-independent ESM, types and explicitly imported CSS.
 
 ```js
 import { initColorMode } from '@fastrd/ui-foundation'
@@ -75,3 +75,17 @@ can use `.fastui-table-scroll` with role=region, aria-label and tabindex=0.
 Set top-level `content: fastUIContent` (exported from `@fastrd/ui-foundation/uno`)
 to include plain JS/TS consumers in the UnoCSS Vite pipeline. Preset-local content
 options alone do not expand the Vite filter. JSX/TSX/Vue/HTML are covered too.
+
+## Refined surfaces and content classes
+
+Buttons retain 4px corners via `--fastui-radius-button`. Controls/panels/overlays
+use 8/12/16px. `--fastui-shadow-sm` and `--fastui-shadow-overlay` vary by theme.
+
+Native HTML supports `.fastui-card` (variants --default/--secondary/--quiet),
+`.fastui-card-header`, `.fastui-card-body`, `.fastui-card-footer`, `.fastui-avatar`
+(sizes --sm/--md/--lg), `.fastui-switch` on input type=checkbox role=switch,
+`.fastui-progress` on progress, `.fastui-skeleton` on an aria-hidden div and
+`.fastui-kbd` on kbd. Avatars contain initials and an optional decorative img;
+plain HTML hosts handle image errors. Label switches and progress; use aria-busy
+on the loading container. Progress max should be explicit in plain HTML to match
+the React/Vue default of 100. Motion and forced-colors rules are included.

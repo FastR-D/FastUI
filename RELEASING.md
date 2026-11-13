@@ -15,8 +15,8 @@ is required. Existing GitHub tarball releases remain immutable.
    `pnpm docs:test`, and
    `node --experimental-vm-modules --test scripts/publish.test.mjs`.
 4. Commit the reviewed files and push main. After checks pass, create and push
-   the exact matching tag, for example `git tag v0.3.0` then
-   `git push origin refs/tags/v0.3.0` for packages versioned 0.3.0.
+   the exact matching tag, for example `git tag v0.4.0` then
+   `git push origin refs/tags/v0.4.0` for packages versioned 0.4.0.
 5. Actions verifies the tag's source, original packed archives, consumer behavior
    and checksums, then publishes foundation followed by Vue and React. Stable
    releases use `latest`; prereleases use `next`.

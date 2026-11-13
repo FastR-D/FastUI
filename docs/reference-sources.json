@@ -51,6 +51,22 @@
       "commit_count": 1,
       "license_file": "LICENSE",
       "license": "MIT"
+    },
+    {
+      "name": "HeroUI",
+      "url": "https://github.com/heroui-inc/heroui.git",
+      "branch": "v3",
+      "commit": "8037a0198427faf1c1d09c6eb9e7bd09290ea3e2",
+      "recorded_date": "2026-11-13",
+      "license_file": "LICENSE",
+      "license": "Apache-2.0",
+      "role": "design research only; no source copied",
+      "references": [
+        "https://heroui.com/en/docs/react/getting-started/design-principles",
+        "https://heroui.com/en/docs/react/getting-started/theming",
+        "https://heroui.com/en/docs/react/components/card",
+        "https://heroui.com/en/docs/react/components/switch"
+      ]
     }
   ],
   "product_references": [
@@ -108,11 +124,11 @@
     }
   ],
   "design_baseline": {
-    "recorded_date": "2026-11-12",
+    "recorded_date": "2026-11-13",
     "authority": [
-      "Original FastUI foundation tokens and controls",
-      "FastWrite workbench"
+      "FastUI / FastWrite semantic palette and compact density",
+      "HeroUI-inspired surface hierarchy and content composition"
     ],
-    "rule": "FastPPT and FastFigure contribute component patterns; their visual styling should converge on the FastWrite baseline."
+    "rule": "Retain compact workbench geometry and existing APIs; refine corners, shadows and feedback and add original cross-framework content primitives."
   }
 }

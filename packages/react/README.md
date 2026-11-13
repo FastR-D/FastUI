@@ -1,6 +1,6 @@
 # @fastrd/ui-react
 
-MIT · 0.3.0 · React/ReactDOM ^18.3 or ^19 peers · exact foundation 0.3.0 registry dependency.
+MIT · 0.4.0 · React/ReactDOM ^18.3 or ^19 peers · exact foundation 0.4.0 registry dependency.
 
 
 The recommended stylesheet integration is UnoCSS: add `UnoCSS()` to Vite and
@@ -104,3 +104,25 @@ accessible region label and tabindex. Hosts own mobile panel rearrangement.
 Set top-level `content: fastUIContent` (exported from `@fastrd/ui-foundation/uno`)
 to include plain JS/TS consumers in the UnoCSS Vite pipeline. Preset-local content
 options alone do not expand the Vite filter. JSX/TSX/Vue/HTML are covered too.
+
+## Content components
+
+`Card` takes `variant="default" | "secondary" | "quiet"`. Compose `CardHeader`,
+`CardBody`, `CardFooter` freely; cards are noninteractive containers. Use labelled
+buttons/links for actions. `Avatar` requires `name`, accepts `src` and `size`
+sm/md/lg; failed images fall back to name initials. `Kbd` renders a native kbd hint.
+
+`Switch` is a native checkbox with role=switch; labels, Space, disabled and form
+name/value follow the platform. Use checked/onChange or defaultChecked and a forwarded input ref.
+Controlled form resets belong to the host. `Progress` renders native progress,
+accepting value, max (default 100), label and tone; missing/nonfinite value is
+indeterminate, finite values clamp to 0…max. Always provide an accessible name.
+Vue users relying on the former native default max=1 should now set max explicitly.
+
+`Skeleton` is an aria-hidden decorative div; use style/class for dimensions and
+aria-busy on its container. Remove it when real content arrives. Skeleton and
+indeterminate progress animations respect reduced motion. All new components
+participate in UnoCSS extraction and JS tree shaking.
+
+Buttons keep their original 4px radius (`--fastui-radius-button`); fields, panels
+and overlays use 8/12/16px. Palette and compact desktop heights remain unchanged.

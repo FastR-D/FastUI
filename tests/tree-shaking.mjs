@@ -38,6 +38,17 @@ assert(!(await generate('<table class="fastui-table"></table>')).includes('.fast
 assert((await generate('', { components: ['Modal'] })).includes('.fastui-dialog'))
 assert(!(await generate(`import type { DialogProps } from '@fastrd/ui-react'`)).includes('.fastui-dialog'))
 assert(!(await generate('<p>no components</p>')).includes('.fastui-button'))
+for (const framework of ['react', 'vue']) {
+  for (const [component, selector] of [['CardBody', '.fastui-card-body'], ['Avatar', '.fastui-avatar'], ['Switch', '.fastui-switch'], ['Progress', '.fastui-progress'], ['Skeleton', '.fastui-skeleton'], ['Kbd', '.fastui-kbd']]) {
+    const css = await generate(`import { ${component} } from '@fastrd/ui-${framework}'`)
+    assert(css.includes(selector), `${framework}/${component} missing styles`)
+    assert(!css.includes('.fastui-dialog'))
+    assert(!css.includes('@keyframes fastui-spin'))
+    assert(css.includes('@keyframes fastui-skeleton') === (component === 'Skeleton'))
+    assert(css.includes('@keyframes fastui-progress') === (component === 'Progress'))
+  }
+}
+assert((await generate('<div class="fastui-card-body"></div>')).includes('.fastui-card-footer'))
 // A fresh generation must not retain components used in an earlier route/build.
 const uno = await createGenerator({ presets: [presetFastUI()] })
 await uno.generate(`import { Dialog } from '@fastrd/ui-react'`)

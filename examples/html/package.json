@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
-    "@fastrd/ui-foundation": "0.3.0"
+    "@fastrd/ui-foundation": "0.4.0"
   },
   "devDependencies": {
     "vite": "~6.4.1"

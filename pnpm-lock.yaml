@@ -80,7 +80,7 @@ importers:
   packages/react:
     dependencies:
       '@fastrd/ui-foundation':
-        specifier: 0.3.0
+        specifier: 0.4.0
         version: link:../foundation
       react:
         specifier: ^18.3.0 || ^19.0.0
@@ -92,7 +92,7 @@ importers:
   packages/vue:
     dependencies:
       '@fastrd/ui-foundation':
-        specifier: 0.3.0
+        specifier: 0.4.0
         version: link:../foundation
       vue:
         specifier: ^3.5.0

@@ -7,18 +7,19 @@
   line-height: 1.5;
   min-height: max(var(--fastui-height-md), var(--fastui-touch-target));
   padding: 3px 6px;
-  border: 1px solid var(--fastui-border-strong);
+  border: 1px solid var(--fastui-border);
   border-radius: var(--fastui-radius-control);
   background: var(--fastui-surface);
   color: var(--fastui-text);
   max-width: 100%;
   min-width: 0;
   color-scheme: var(--fastui-color-scheme);
+  transition: background-color var(--fastui-duration-fast) var(--fastui-ease), border-color var(--fastui-duration-fast) var(--fastui-ease), box-shadow var(--fastui-duration-fast) var(--fastui-ease);
 }
-.fastui-button { transition: background-color var(--fastui-duration-fast) var(--fastui-ease), color var(--fastui-duration-fast) var(--fastui-ease); display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-weight: 600; text-decoration: none; }
+.fastui-button { transition: background-color var(--fastui-duration-fast) var(--fastui-ease), color var(--fastui-duration-fast) var(--fastui-ease), box-shadow var(--fastui-duration-fast) var(--fastui-ease), transform var(--fastui-duration-fast) var(--fastui-ease); display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-weight: 600; text-decoration: none; }
 .fastui-button--sm, .fastui-input--sm, .fastui-select--sm { min-height: max(var(--fastui-height-sm), var(--fastui-touch-target)); padding: 2px 8px; font-size: 12px; }
 .fastui-button--xs, .fastui-input--xs, .fastui-select--xs { min-height: max(var(--fastui-height-xs), var(--fastui-touch-target)); padding: 1px 6px; font-size: 12px; }
-.fastui-button { padding-inline: 11px; background: var(--fastui-raised); border-color: transparent; }
+.fastui-button { padding-inline: 11px; border-radius: var(--fastui-radius-button); background: var(--fastui-raised); border-color: transparent; }
 .fastui-button:hover:not(:disabled) { background: var(--fastui-secondary-hover); }
 .fastui-button--primary { background: var(--fastui-primary); border-color: var(--fastui-primary); color: var(--fastui-on-primary); }
 .fastui-button--primary:hover:not(:disabled) { background: var(--fastui-primary-hover); }
@@ -27,6 +28,9 @@
 .fastui-button--quiet, .fastui-button--icon, .fastui-button--navigation { background: transparent; border-color: transparent; }
 .fastui-button--icon { aspect-ratio: 1; padding: 5px; }
 .fastui-button--navigation { border-radius: 0; }
+.fastui-button:active:not(:disabled) { transform: translateY(1px); }
+.fastui-input:hover:not(:disabled):not([aria-invalid=true]), .fastui-textarea:hover:not(:disabled):not([aria-invalid=true]), .fastui-select:hover:not(:disabled) { border-color: var(--fastui-border-strong); }
+.fastui-input:focus-visible, .fastui-textarea:focus-visible, .fastui-select:focus-visible { border-color: var(--fastui-focus); }
 .fastui-button[aria-pressed=true], .fastui-button[aria-selected=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
 .fastui-button:disabled, .fastui-input:disabled, .fastui-textarea:disabled, .fastui-select:disabled { opacity: var(--fastui-disabled-opacity); cursor: not-allowed; }
 .fastui-button:focus-visible, .fastui-input:focus-visible, .fastui-textarea:focus-visible, .fastui-select:focus-visible, .fastui-link:focus-visible, .fastui-disclosure-trigger:focus-visible { outline: 2px solid var(--fastui-focus); outline-offset: 2px; }
@@ -39,25 +43,24 @@
 .fastui-legend { color: var(--fastui-secondary); padding: 0 4px; }
 .fastui-heading { color: var(--fastui-text); font-weight: 600; }
 .fastui-link { color: var(--fastui-focus); text-underline-offset: 3px; }
-.fastui-progress { accent-color: var(--fastui-primary); }
 .fastui-table { border-collapse: collapse; text-align: left; }
 .fastui-table :where(th, td) { padding: 12px; border-bottom: 1px solid var(--fastui-border); }
 .fastui-table th { background: var(--fastui-raised); font-weight: 600; }
 .fastui-disclosure-trigger { padding: 5px 8px; cursor: pointer; }
-.fastui-dialog { box-sizing: border-box; width: min(620px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-overlay); background: var(--fastui-surface); color: var(--fastui-text); font: var(--fastui-font-weight) 14px/1.5 var(--fastui-font); box-shadow: 0 16px 48px #0004; }
+.fastui-dialog { box-sizing: border-box; width: min(620px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-overlay); background: var(--fastui-surface); color: var(--fastui-text); font: var(--fastui-font-weight) 14px/1.5 var(--fastui-font); box-shadow: var(--fastui-shadow-overlay); }
 .fastui-dialog--lg { width: min(880px, calc(100% - 32px)); }
 .fastui-dialog--xl { width: min(1100px, calc(100% - 32px)); }
-.fastui-dialog::backdrop { background: var(--fastui-overlay); }
+.fastui-dialog::backdrop { background: var(--fastui-overlay); backdrop-filter: blur(4px); }
 .fastui-dialog > :where(header, footer), .fastui-modal-body { padding: 20px 24px; }
 .fastui-dialog > header { border-bottom: 1px solid var(--fastui-border); }
 .fastui-dialog > footer { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--fastui-border); }
 .fastui-modal-body { display: grid; gap: 16px; }
 .fastui-alert, .fastui-badge, .fastui-empty, .fastui-loading { font-family: var(--fastui-font); color: var(--fastui-text); }
-.fastui-alert { border: 1px solid var(--fastui-border); border-left: 3px solid var(--fastui-tone, var(--fastui-focus)); border-radius: var(--fastui-radius-control); padding: 12px 16px; background: var(--fastui-surface); }
-.fastui-badge { display: inline-block; border: 1px solid currentColor; color: var(--fastui-tone, var(--fastui-focus)); border-radius: 4px; padding: 1px 6px; font-size: 12px; }
-.fastui-tone-success { --fastui-tone: var(--fastui-success); }
-.fastui-tone-warning { --fastui-tone: var(--fastui-warning); }
-.fastui-tone-danger { --fastui-tone: var(--fastui-danger); }
+.fastui-alert { border: 1px solid var(--fastui-border); border-left: 3px solid var(--fastui-tone, var(--fastui-focus)); border-radius: 0 var(--fastui-radius-control) var(--fastui-radius-control) 0; padding: 12px 16px; background: var(--fastui-tone-soft, var(--fastui-selected)); }
+.fastui-badge { display: inline-flex; align-items: center; gap: 4px; border: 1px solid transparent; color: var(--fastui-tone, var(--fastui-selected-text)); background: var(--fastui-tone-soft, var(--fastui-selected)); border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 600; line-height: 1.6; }
+.fastui-tone-success { --fastui-tone: var(--fastui-success); --fastui-tone-soft: var(--fastui-success-soft); }
+.fastui-tone-warning { --fastui-tone: var(--fastui-warning); --fastui-tone-soft: var(--fastui-warning-soft); }
+.fastui-tone-danger { --fastui-tone: var(--fastui-danger); --fastui-tone-soft: var(--fastui-danger-soft); }
 .fastui-empty { padding: 24px; text-align: center; }
 .fastui-empty > h2 { font-size: 16px; }
 .fastui-loading { display: inline-flex; align-items: center; gap: 8px; }
@@ -67,9 +70,11 @@
 .fastui-toolbar { padding: 8px 12px; border-bottom: 1px solid var(--fastui-border); }
 .fastui-statusbar { padding: 4px 10px; border-top: 1px solid var(--fastui-border); background: var(--fastui-chrome); }
 .fastui-divider { border: 0; border-top: 1px solid var(--fastui-border); margin: 12px 0; }
-.fastui-section { min-width: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); }
+.fastui-section { min-width: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); box-shadow: var(--fastui-shadow-sm); }
 .fastui-section > header { padding: 10px 12px; border-bottom: 1px solid var(--fastui-border); }
 .fastui-list-row { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 10px 12px; border-bottom: 1px solid var(--fastui-border); color: var(--fastui-text); font: var(--fastui-font-weight) 13px/1.5 var(--fastui-font); text-decoration: none; }
+.fastui-list-row:last-child { border-bottom: 0; }
+.fastui-list-row { transition: background-color var(--fastui-duration-fast) var(--fastui-ease); }
 .fastui-list-row:hover { background: var(--fastui-hover); }
 .fastui-list-row[aria-current]:not([aria-current=false]), .fastui-list-row[aria-selected=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
 .fastui-tabs { display: flex; align-items: stretch; overflow-x: auto; min-width: 0; background: var(--fastui-chrome); border-bottom: 1px solid var(--fastui-border); }
@@ -86,14 +91,15 @@
 .fastui-tab--preview { font-style: italic; }
 .fastui-tab-dirty { display: inline-block; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--fastui-muted); }
 .fastui-tab-close { flex: 0 0 max(20px, var(--fastui-touch-target)); width: max(20px, var(--fastui-touch-target)); height: max(20px, var(--fastui-touch-target)); margin-right: 4px; padding: 0; }
-.fastui-segments { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-control); background: var(--fastui-chrome); }
-.fastui-segment { min-height: max(var(--fastui-height-sm), var(--fastui-touch-target)); padding: 2px 10px; border-radius: 2px; color: var(--fastui-secondary); }
+.fastui-segments { display: inline-flex; flex-wrap: wrap; gap: 3px; padding: 3px; border: 1px solid transparent; border-radius: calc(var(--fastui-radius-control) + 3px); background: var(--fastui-raised); }
+.fastui-segment { min-height: max(var(--fastui-height-sm), var(--fastui-touch-target)); padding: 2px 10px; border-radius: var(--fastui-radius-control); transition: background-color var(--fastui-duration-fast) var(--fastui-ease), box-shadow var(--fastui-duration-fast) var(--fastui-ease); color: var(--fastui-secondary); }
 .fastui-segment:hover:not(:disabled) { background: var(--fastui-hover); }
-.fastui-segment[aria-pressed=true] { background: var(--fastui-selected); color: var(--fastui-selected-text); }
+.fastui-segment[aria-pressed=true] { background: var(--fastui-surface); color: var(--fastui-text); box-shadow: var(--fastui-shadow-sm); }
 .fastui-spinner { display: inline-block; box-sizing: border-box; width: 14px; height: 14px; flex-shrink: 0; border: 2px solid var(--fastui-border-strong); border-top-color: var(--fastui-focus); border-radius: 50%; animation: fastui-spin 800ms linear infinite; }
 @keyframes fastui-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
-  .fastui-button { transition: none; }
+  .fastui-button, .fastui-input, .fastui-textarea, .fastui-select, .fastui-segment, .fastui-list-row { transition: none; }
+  .fastui-button:active:not(:disabled) { transform: none; }
   .fastui-spinner { animation: none; }
 }
 @media (forced-colors: active) {
@@ -115,7 +121,7 @@
 .fastui-inspector-section[open] > summary::before { transform: rotate(45deg); }
 .fastui-inspector-section > summary:hover { background: var(--fastui-hover); }
 .fastui-inspector-body { display: grid; gap: 10px; min-width: 0; padding: 0 12px 12px; }
-.fastui-asset-card { box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; gap: 0; min-width: 0; max-width: 100%; padding: 0; overflow: hidden; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); text-align: start; font: var(--fastui-font-weight) 12px/1.5 var(--fastui-font); cursor: pointer; transition: border-color var(--fastui-duration-fast) var(--fastui-ease); }
+.fastui-asset-card { box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; gap: 0; min-width: 0; max-width: 100%; padding: 0; overflow: hidden; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); text-align: start; font: var(--fastui-font-weight) 12px/1.5 var(--fastui-font); cursor: pointer; box-shadow: var(--fastui-shadow-sm); transition: border-color var(--fastui-duration-fast) var(--fastui-ease), box-shadow var(--fastui-duration-fast) var(--fastui-ease); }
 .fastui-asset-card:hover:not(:disabled) { border-color: var(--fastui-focus); }
 .fastui-asset-card[aria-pressed=true] { border-color: var(--fastui-focus); box-shadow: inset 0 0 0 1px var(--fastui-focus); background: var(--fastui-selected); }
 .fastui-asset-preview { display: grid; place-items: center; min-height: 80px; padding: 8px; border-bottom: 1px solid var(--fastui-border); background: var(--fastui-raised); overflow: hidden; }
@@ -135,7 +141,7 @@
   .fastui-asset-card { transition: none; }
 }
 
-/* Touch density is additive: desktop tokens and the FastWrite palette stay intact. */
+/* Touch density is additive to the compact desktop geometry. */
 .fastui-input:not([type=checkbox]):not([type=radio]):not([type=range]), .fastui-textarea, .fastui-select { font-size: max(var(--fastui-font-size), var(--fastui-touch-input-font-size)); }
 .fastui-button--icon { min-width: max(var(--fastui-height-xs), var(--fastui-touch-target)); }
 .fastui-disclosure-trigger, .fastui-inspector-section > summary { box-sizing: border-box; min-height: var(--fastui-touch-target); }
@@ -164,4 +170,50 @@
   .fastui-statusbar, .fastui-list-row { overflow-wrap: anywhere; }
   .fastui-alert, .fastui-empty { padding: 12px; overflow-wrap: anywhere; }
   .fastui-canvas { padding: 12px; }
+}
+
+/* Content primitives: composable surfaces, native boolean controls and feedback. */
+.fastui-card { box-sizing: border-box; display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--fastui-border); border-radius: var(--fastui-radius-panel); background: var(--fastui-surface); color: var(--fastui-text); box-shadow: var(--fastui-shadow-sm); font: var(--fastui-font-weight) 13px/1.6 var(--fastui-font); }
+.fastui-card--secondary { background: var(--fastui-raised); box-shadow: none; }
+.fastui-card--quiet { background: transparent; border-color: transparent; box-shadow: none; }
+.fastui-card-header, .fastui-card-body, .fastui-card-footer { min-width: 0; padding: 16px; }
+.fastui-card-header + .fastui-card-body { padding-top: 0; }
+.fastui-card-body { flex: 1; }
+.fastui-card-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--fastui-border); }
+.fastui-avatar { --fastui-avatar-size: 36px; position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; box-sizing: border-box; width: var(--fastui-avatar-size); height: var(--fastui-avatar-size); overflow: hidden; border: 1px solid var(--fastui-border); border-radius: 50%; background: var(--fastui-selected); color: var(--fastui-selected-text); font: 600 13px/1 var(--fastui-font); vertical-align: middle; }
+.fastui-avatar--sm { --fastui-avatar-size: 28px; font-size: 11px; }
+.fastui-avatar--lg { --fastui-avatar-size: 48px; font-size: 18px; }
+.fastui-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fastui-switch { appearance: none; -webkit-appearance: none; position: relative; display: inline-block; box-sizing: border-box; flex: 0 0 auto; width: max(36px, var(--fastui-touch-target)); height: max(22px, var(--fastui-touch-target)); margin: 0; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer; vertical-align: middle; touch-action: manipulation; }
+.fastui-switch::before { content: ''; position: absolute; inset-inline: 0; top: calc(50% - 11px); height: 22px; box-sizing: border-box; border: 1px solid var(--fastui-border-strong); border-radius: 999px; background: var(--fastui-raised); transition: background-color var(--fastui-duration-fast) var(--fastui-ease); }
+.fastui-switch::after { content: ''; position: absolute; top: calc(50% - 8px); inset-inline-start: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--fastui-secondary); transition: inset-inline-start var(--fastui-duration-normal) var(--fastui-ease), background-color var(--fastui-duration-fast) var(--fastui-ease); }
+.fastui-switch:checked::before { border-color: var(--fastui-primary); background: var(--fastui-primary); }
+.fastui-switch:checked::after { inset-inline-start: calc(100% - 19px); background: var(--fastui-on-primary); }
+.fastui-switch:hover:not(:disabled)::before { border-color: var(--fastui-focus); }
+.fastui-switch:focus-visible { outline: 2px solid var(--fastui-focus); outline-offset: 3px; }
+.fastui-switch:disabled { opacity: var(--fastui-disabled-opacity); cursor: not-allowed; }
+.fastui-field:has(> .fastui-switch) { display: flex; align-items: center; min-height: var(--fastui-touch-target); gap: 10px; }
+.fastui-progress { appearance: none; -webkit-appearance: none; display: block; width: 100%; height: 6px; overflow: hidden; border: 0; border-radius: 999px; background: var(--fastui-raised); color: var(--fastui-tone, var(--fastui-primary)); accent-color: var(--fastui-tone, var(--fastui-primary)); }
+.fastui-progress::-webkit-progress-bar { background: var(--fastui-raised); border-radius: inherit; }
+.fastui-progress::-webkit-progress-value { background: var(--fastui-tone, var(--fastui-primary)); border-radius: inherit; }
+.fastui-progress::-moz-progress-bar { background: var(--fastui-tone, var(--fastui-primary)); border-radius: inherit; }
+.fastui-progress:indeterminate { background: var(--fastui-selected); animation: fastui-progress 1.4s ease-in-out infinite; }
+.fastui-progress:indeterminate::-webkit-progress-bar { background: var(--fastui-primary); }
+.fastui-progress:indeterminate::-moz-progress-bar { background: var(--fastui-primary); }
+@keyframes fastui-progress { 50% { opacity: .45; } }
+.fastui-skeleton { display: block; box-sizing: border-box; min-height: 14px; border-radius: var(--fastui-radius-control); background: color-mix(in srgb, var(--fastui-border-strong) 20%, var(--fastui-raised)); animation: fastui-skeleton 1.8s ease-in-out infinite; }
+@keyframes fastui-skeleton { 50% { opacity: .45; } }
+.fastui-kbd { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; min-height: 22px; padding: 1px 5px; border: 1px solid var(--fastui-border); border-bottom-width: 2px; border-radius: 5px; background: var(--fastui-page); color: var(--fastui-secondary); font: var(--fastui-font-weight-code) 11px/1.5 var(--fastui-font-mono); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .fastui-switch::before, .fastui-switch::after { transition: none; }
+  .fastui-skeleton, .fastui-progress:indeterminate { animation: none; }
+}
+@media (forced-colors: active) {
+  .fastui-switch::before { background: Canvas; border-color: ButtonText; }
+  .fastui-switch::after { background: ButtonText; }
+  .fastui-switch:checked::before { background: Highlight; border-color: Highlight; }
+  .fastui-switch:checked::after { background: HighlightText; }
+  .fastui-switch:disabled::before { border-color: GrayText; }
+  .fastui-progress { appearance: auto; }
+  .fastui-skeleton { border: 1px solid GrayText; }
 }

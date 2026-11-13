@@ -6,7 +6,9 @@ const styles = __FASTUI_STYLES__
 const componentFamilies = {
   Button: ['button'], TextField: ['input'], TextArea: ['textarea'], Checkbox: ['input'],
   Select: ['select'], SelectField: ['select'], Field: ['field'], Fieldset: ['fieldset'], Legend: ['legend'],
-  Heading: ['heading'], Link: ['link'], Progress: ['progress'], Table: ['table'],
+  Heading: ['heading'], Link: ['link'], Progress: ['progress', 'tone'], Table: ['table'],
+  Card: ['card'], CardHeader: ['card'], CardBody: ['card'], CardFooter: ['card'],
+  Avatar: ['avatar'], Switch: ['switch'], Skeleton: ['skeleton'], Kbd: ['kbd'],
   DisclosureTrigger: ['disclosure-trigger'], Dialog: ['dialog'], Modal: ['dialog'], DialogSurface: ['dialog'], ModalBody: ['dialog'],
   Alert: ['alert', 'tone'], Badge: ['badge', 'tone'], EmptyState: ['empty'], Loading: ['loading', 'spinner'],
   TabBar: ['tabs'], SegmentedControl: ['segments'], Toolbar: ['toolbar'], StatusBar: ['statusbar'],
@@ -25,6 +27,7 @@ function familyForClass(value: string) {
   if (/^inspector-/.test(name)) return 'inspector'
   if (/^asset-/.test(name)) return 'asset'
   if (/^tone-/.test(name)) return 'tone'
+  if (/^card(?:-|$)/.test(name)) return 'card'
   return name === 'modal-body' ? 'dialog' : name
 }
 /** UnoCSS's Vite pipeline needs this on the top-level config to scan plain TS/JS. */

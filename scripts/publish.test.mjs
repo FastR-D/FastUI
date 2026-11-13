@@ -33,7 +33,7 @@ async function scenario(options = {}) {
   const records = structuredClone(packages)
   options.packages?.(records)
   const bytes = Buffer.from(JSON.stringify(records))
-  const results = { status: 'passed', scenarios: Array.from({ length: 62 }, (_, i) => `scenario-${i}`), packagesSha256: sha(bytes) }
+  const results = { status: 'passed', scenarios: Array.from({ length: 65 }, (_, i) => `scenario-${i}`), packagesSha256: sha(bytes) }
   options.results?.(results)
   const context = createContext({ Buffer, URL, AbortSignal: { timeout: timeoutMs => ({ timeoutMs, expiresAt: clock + timeoutMs }) }, process: { env, argv: ['node', 'scripts/publish.mjs'], execPath: process.execPath },
     console: { log: (...args) => events.push(['log', args.join(' ')]) },
@@ -263,8 +263,8 @@ const rejections = [
   ['unknown package', { packages: rows => { rows[2].name = '@other/unknown' } }, /Unexpected verified/, 0],
   ['wrong package filename', { packages: rows => { rows[0].file = '../other.tgz' } }, /Unexpected verified/, 0],
   ['wrong verified digest', { packages: rows => { rows[0].sha256 = '0'.repeat(64) } }, /SHA-256 differs/, 0],
-  ['unbound results', { results: result => { result.packagesSha256 = '0'.repeat(64) } }, /62-scenario verification/, 0],
-  ['failed verification', { results: result => { result.status = 'failed' } }, /62-scenario verification/, 0],
+  ['unbound results', { results: result => { result.packagesSha256 = '0'.repeat(64) } }, /65-scenario verification/, 0],
+  ['failed verification', { results: result => { result.status = 'failed' } }, /65-scenario verification/, 0],
   ['wrong packed name', { packed: manifest => { manifest.name = '@other/pkg' } }, /Packed manifest/, 0],
   ['wrong packed version', { packed: manifest => { manifest.version = '9.9.9' } }, /Packed manifest/, 0],
   ['wrong packed repository', { packed: manifest => { manifest.repository.url = 'git+https://other.invalid/x.git' } }, /Packed manifest/, 0],
