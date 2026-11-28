@@ -1,3 +1,4 @@
+import { runSelectScenarios } from '../tests/select.mjs'
 import { cp, mkdir, readFile, readdir, writeFile, rm } from 'node:fs/promises'
 import { spawn, spawnSync, execFileSync } from 'node:child_process'
 import { resolve, join } from 'node:path'
@@ -130,7 +131,7 @@ try {
     urls[`${framework}-dev`] = `http://127.0.0.1:${server.httpServer.address().port}`
   }
   browser = await chromium.launch({ headless: true })
-  const scenarios = [...await runWorkbenchScenarios(browser, urls), ...await runDialogRegressions(browser, urls, artifacts), ...await runContentScenarios(browser, urls), ...await runScenarios(browser, urls, artifacts)]
+  const scenarios = [...await runSelectScenarios(browser, urls, artifacts), ...await runWorkbenchScenarios(browser, urls), ...await runDialogRegressions(browser, urls, artifacts), ...await runContentScenarios(browser, urls), ...await runScenarios(browser, urls, artifacts)]
   for (const pkg of publicPackages) {
     const downloads = fixture.requests.filter(request => request.kind === 'tarball' && request.name === pkg.name)
     const expected = pkg.name === foundationManifest.name ? 5 : pkg.name === '@fastrd/ui-react' ? 3 : 2

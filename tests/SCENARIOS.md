@@ -57,3 +57,5 @@ frameworks, boolean v-model, 44px touch switches, the interactive export preview
 all routes at 320–1440px and the original 4px button corners in both themes.
 UnoCSS tests verify each new component's styles and keep Skeleton/Progress
 keyframes exclusive to their respective component families.
+
+- Single selects: React/Vue controlled callbacks and DOM refs; native form value and reset; pointer/touch/keyboard selection; grouped and disabled options; Escape inside dialogs; top/bottom collision handling, clipped containers, visual viewport resize, long labels, theme tokens and cleanup.

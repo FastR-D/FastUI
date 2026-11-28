@@ -65,3 +65,7 @@ Progress 的 value 缺省表示不确定进度，max 缺省为 100；此前 Vue 
 `unconfig@7.5.0` 的声明使用了未声明的 `Args[0]`，而实现的 `force` 参数为 boolean。
 `patches/unconfig@7.5.0.patch` 仅修正这个类型声明，保留严格类型检查。依赖升级修复该问题后
 应移除补丁；未修改其运行时代码。
+
+## 0.5.0：统一下拉弹层
+
+React / Vue 的 Select 不再调用系统单选菜单，默认使用统一弹层；现有取值、事件、ref 和表单 API 不变，无需修改使用方。SelectField 同步更新。弹层支持上下避让、长列表滚动和模态框。单选键盘交互中，方向键先移动高亮，Enter 确认，Escape 取消；多选与 size > 1 保留原生行为。HTML 使用方需调用 enhanceSelect 并在卸载时清理。

@@ -1,0 +1,70 @@
+import { expect, chromium } from '@playwright/test'
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
+
+export async function runSelectScenarios(browser, urls = {}, artifacts = 'artifacts') {
+  const results = []
+  for (const framework of ['react','vue','react18'].filter(name => urls[name])) {
+    const page = await browser.newPage()
+    await page.goto(urls[framework])
+    const select = page.getByRole('combobox', { name: 'Format', exact: true })
+    await expect(select).toHaveAttribute('data-fastui-select', '')
+    await select.click()
+    const popup = page.locator('.fastui-select-popup')
+    await expect(popup).toBeVisible()
+    await popup.getByRole('option', { name: 'SVG', exact: true }).click()
+    await expect(select).toHaveValue('svg')
+    await expect(page.getByTestId('format')).toHaveText(framework === 'vue' ? 'svg:1' : 'svg')
+    await select.press('ArrowDown')
+    await expect(popup).toBeVisible()
+    await select.press('Home')
+    await select.press('Enter')
+    await expect(select).toHaveValue('pdf')
+    await expect(popup).toHaveCount(0)
+    await page.close()
+    results.push(`${framework}:styled-select-pointer-keyboard-controlled-events`)
+  }
+  const context = await browser.newContext({viewport:{width:390,height:640},hasTouch:true,isMobile:true,deviceScaleFactor:1})
+  const page = await context.newPage()
+  const source = await readFile('packages/foundation/dist/index.js','utf8')
+  const css = await readFile('packages/foundation/dist/tokens.css','utf8') + '\n' + await readFile('packages/foundation/dist/controls.css','utf8')
+  await page.route('https://select.fastui.test/**', route => route.fulfill(route.request().url().endsWith('/index.js') ? {contentType:'text/javascript',body:source} : {contentType:'text/html',body:`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css} body{margin:0;height:1400px;background:var(--fastui-page);color:var(--fastui-text)} #clipped{position:fixed;right:8px;bottom:12px;width:260px;height:44px;overflow:hidden} select{width:100%;height:44px} dialog{width:280px;height:220px} </style><form id="form"><fieldset id="group"><div id="clipped"><label for="choice">Choice</label><select class="fastui-select" id="choice" name="choice" required aria-label="Choice"><option value="" disabled selected>Choose</option><optgroup label="Models"><option value="a">Alpha model</option><option value="b">Beta model with a very long descriptive label that wraps inside the popup</option><option value="c" disabled>Disabled model</option></optgroup><optgroup label="Unavailable" disabled><option value="z">Disabled group model</option></optgroup>${Array.from({length:40},(_,i)=>`<option value="item-${i}">Research model ${i}</option>`).join('')}</select></div></fieldset><button type="reset" id="reset">Reset</button></form><button id="outside">Outside</button><dialog id="dialog"><button id="close">Close</button></dialog><script type="module">import {enhanceSelect} from './index.js'; window.cleanup=enhanceSelect(document.querySelector('select')); window.ready=true;</script>` }))
+  await page.goto('https://select.fastui.test/')
+  await page.waitForFunction(()=>window.ready)
+  const select = page.getByRole('combobox',{name:'Choice',exact:true}), popup = page.locator('.fastui-select-popup')
+  await select.tap()
+  await expect(popup).toBeVisible()
+  await expect(popup).toHaveAttribute('data-placement','top')
+  await expect(popup.getByRole('option',{name:'Disabled model',exact:true})).toHaveAttribute('aria-disabled','true')
+  await expect(popup.getByRole('option',{name:'Disabled group model',exact:true})).toHaveAttribute('aria-disabled','true')
+  let box=await popup.boundingBox(); expect(box.x).toBeGreaterThanOrEqual(8); expect(box.x+box.width).toBeLessThanOrEqual(390-8); expect(box.y).toBeGreaterThanOrEqual(8); expect(box.y+box.height).toBeLessThan(640)
+  await popup.getByRole('option',{name:'Alpha model',exact:true}).tap()
+  await expect(select).toHaveValue('a')
+  expect(await page.evaluate(()=>new FormData(document.querySelector('form')).get('choice'))).toBe('a')
+  await select.press('ArrowDown'); await select.press('End'); await select.press('Enter')
+  await expect(select).toHaveValue('item-39')
+  await select.press('b'); await select.press('Enter'); await expect(select).toHaveValue('b')
+  await select.press('ArrowDown'); await select.press('Escape'); await expect(popup).toHaveCount(0); await expect(select).toBeFocused()
+  await select.press('ArrowDown'); await select.press('Tab'); await expect(popup).toHaveCount(0)
+  await select.tap(); await page.locator('#outside').tap(); await expect(popup).toHaveCount(0)
+  await select.tap(); await page.evaluate(()=>document.querySelector('#group').disabled=true); await expect(popup).toHaveCount(0)
+  await page.evaluate(()=>document.querySelector('#group').disabled=false)
+  await page.locator('#reset').click(); await expect(select).toHaveValue('')
+  expect(await select.evaluate(node=>node.checkValidity())).toBe(false)
+  await page.evaluate(()=>{document.documentElement.dataset.fastuiTheme='dark';const clip=document.querySelector('#clipped');clip.style.top='16px';clip.style.bottom='auto';document.querySelector('#choice').value='a'})
+  await select.tap(); await expect(popup).toHaveAttribute('data-placement','bottom')
+  expect(await popup.evaluate(node=>getComputedStyle(node).backgroundColor)).not.toBe('rgb(255, 255, 255)')
+  await page.screenshot({path:resolve(artifacts,'select-mobile-dark.png')})
+  await page.setViewportSize({width:320,height:480})
+  await expect.poll(async()=>{const b=await popup.boundingBox();return b.x>=8&&b.x+b.width<=312&&b.y+b.height<=472}).toBe(true)
+  await select.press('Escape')
+  await page.evaluate(()=>{const dialog=document.querySelector('#dialog');dialog.append(document.querySelector('#clipped'));document.querySelector('#clipped').style.top='100px';dialog.showModal()})
+  await select.tap(); await expect(popup).toBeVisible(); await select.press('Escape'); await expect(page.locator('#dialog')).toBeVisible(); await expect(popup).toHaveCount(0)
+  await select.tap(); await page.evaluate(()=>window.cleanup()); await expect(popup).toHaveCount(0); await expect(select).not.toHaveAttribute('data-fastui-select','')
+  await context.close()
+  results.push('select:touch-collision-clipping-dialog-theme-resize-groups-typeahead-form-reset-disabled-cleanup')
+  return results
+}
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  const browser=await chromium.launch();try{console.log(await runSelectScenarios(browser,{},'artifacts'))}finally{await browser.close()}
+}

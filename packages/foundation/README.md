@@ -89,3 +89,16 @@ Native HTML supports `.fastui-card` (variants --default/--secondary/--quiet),
 plain HTML hosts handle image errors. Label switches and progress; use aria-busy
 on the loading container. Progress max should be explicit in plain HTML to match
 the React/Vue default of 100. Motion and forced-colors rules are included.
+
+## Styled HTML selects
+
+```js
+import { enhanceSelect } from '@fastrd/ui-foundation'
+const dispose = enhanceSelect(document.querySelector('select.fastui-select'))
+// Dispose before removing the control. React and Vue manage this automatically.
+dispose()
+```
+
+Use the normal tokens and controls CSS, or include `Select` in the UnoCSS preset.
+The single-select popup flips above/below the control and stays inside the visual viewport.
+Native labels, FormData, validation and form reset are preserved.

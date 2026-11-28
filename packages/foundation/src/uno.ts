@@ -28,6 +28,7 @@ function familyForClass(value: string) {
   if (/^asset-/.test(name)) return 'asset'
   if (/^tone-/.test(name)) return 'tone'
   if (/^card(?:-|$)/.test(name)) return 'card'
+  if (/^select(?:-|$)/.test(name)) return 'select'
   return name === 'modal-body' ? 'dialog' : name
 }
 /** UnoCSS's Vite pipeline needs this on the top-level config to scan plain TS/JS. */

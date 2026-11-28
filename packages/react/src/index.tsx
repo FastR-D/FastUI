@@ -3,7 +3,7 @@ import {
   type ButtonHTMLAttributes, type InputHTMLAttributes, type TextareaHTMLAttributes,
   type SelectHTMLAttributes, type DialogHTMLAttributes, type HTMLAttributes, type ReactNode,
 } from 'react'
-import { syncDialog } from '@fastrd/ui-foundation'
+import { syncDialog, enhanceSelect } from '@fastrd/ui-foundation'
 
 export type ControlSize = 'xs' | 'sm' | 'md'
 export type ButtonVariant = 'primary' | 'secondary' | 'quiet' | 'icon' | 'navigation' | 'danger'
@@ -36,8 +36,21 @@ export const Checkbox = /* @__PURE__ */ forwardRef<HTMLInputElement, Omit<InputH
 ) { return <input {...props} type="checkbox" ref={ref} className={classes('fastui-input', className)} /> })
 export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> { size?: ControlSize }
 export const Select = /* @__PURE__ */ forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { size = 'md', className, ...props }, ref,
-) { return <select {...props} ref={ref} className={classes('fastui-select', `fastui-select--${size}`, className)} /> })
+  { size = 'md', className, ...props }, forwardedRef,
+) {
+  const surface = useRef<HTMLSelectElement | null>(null)
+  const cleanupRef = useRef<(() => void) | void>(undefined)
+  const setRef = useCallback((element: HTMLSelectElement | null) => {
+    surface.current = element
+    if (typeof forwardedRef === 'function') {
+      if (element) cleanupRef.current = forwardedRef(element)
+      else if (typeof cleanupRef.current === 'function') { cleanupRef.current(); cleanupRef.current = undefined }
+      else forwardedRef(null)
+    } else if (forwardedRef) forwardedRef.current = element
+  }, [forwardedRef])
+  useBrowserLayoutEffect(() => { if (surface.current) return enhanceSelect(surface.current) }, [])
+  return <select {...props} ref={setRef} className={classes('fastui-select', `fastui-select--${size}`, className)} />
+})
 
 export interface DialogProps extends Omit<DialogHTMLAttributes<HTMLDialogElement>, 'open' | 'onClose'> {
   open: boolean

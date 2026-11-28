@@ -1,3 +1,4 @@
+export { enhanceSelect, disposeSelect } from './select.js'
 export type ColorMode = 'light' | 'dark' | 'system'
 export type ResolvedColorMode = Exclude<ColorMode, 'system'>
 export interface ColorModeState { mode: ColorMode; resolved: ResolvedColorMode }

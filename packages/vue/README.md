@@ -43,10 +43,11 @@ focus, inertness and nesting. No body teleport: scoped tokens survive.
 Native `method=dialog` forms are not the controlled close API.
 
 Select accepts value, options [{value,label,disabled?}], placeholder, disabled,
-size and emits change(string) only for a different value. It is a native select:
-keyboard/typeahead/touch/form behavior follows the platform. In migration,
-remove the original custom-listbox CSS and avoid handling preview shortcuts
-when a native select has focus. Disabled options are skipped by the browser.
+size and emits change(string) only for a different value. Select and SelectField
+use the shared themed popup with viewport collision handling, scroll limits,
+keyboard navigation, typeahead, disabled options/groups and dialog support.
+The native form value, validation, reset, attributes and v-model are preserved.
+Multiple selection and size > 1 listboxes retain native behavior.
 
 Semantic primitives preserve the shared names and native refs: Box, Text,
 Heading, Panel, ModalBody, Header, Footer, Nav, Aside, Main, Article, Form, Field,

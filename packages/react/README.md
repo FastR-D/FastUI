@@ -126,3 +126,7 @@ participate in UnoCSS extraction and JS tree shaking.
 
 Buttons keep their original 4px radius (`--fastui-radius-button`); fields, panels
 and overlays use 8/12/16px. Palette and compact desktop heights remain unchanged.
+
+## Select popup (0.5+)
+
+Single-select controls use a themed popup with viewport collision handling, scrolling and long option wrapping. Existing `value`, `defaultValue`, `onChange`, native refs, `name`, `required`, form reset and `<optgroup>` remain supported. Arrow keys, Home/End and typeahead move the active option; Enter commits, Escape cancels, and Tab closes before moving focus. The popup stays inside a containing dialog’s top layer. Multiple selection and `size > 1` listboxes retain native behavior. No portal setup or extra stylesheet is required with the FastUI UnoCSS preset.

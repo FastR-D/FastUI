@@ -91,3 +91,8 @@ await mkdir('artifacts/tree-shaking', { recursive: true })
 await writeFile('artifacts/tree-shaking/results.json', JSON.stringify({ status: 'passed', ...metrics }, null, 2) + '\n')
 console.log('PASS: UnoCSS extraction, aliases, namespace imports, dynamic variants, media states and JS/CSS pruning')
 console.log(JSON.stringify(metrics))
+
+const selectCSS = await generate(`import { Select } from '@fastrd/ui-react'; <Select />`)
+assert(selectCSS.includes('.fastui-select-popup'))
+assert(selectCSS.includes('.fastui-select-option'))
+assert(!buttonCSS.includes('.fastui-select-popup'))

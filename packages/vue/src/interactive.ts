@@ -1,8 +1,8 @@
 import {
   defineComponent, h, mergeProps, shallowRef, watch, onMounted, onBeforeUnmount,
-  type ShallowRef, type PropType, type FunctionalComponent, type SelectHTMLAttributes,
+  type VNode, type ShallowRef, type PropType, type FunctionalComponent, type SelectHTMLAttributes,
 } from 'vue'
-import { syncDialog } from '@fastrd/ui-foundation'
+import { syncDialog, enhanceSelect, disposeSelect } from '@fastrd/ui-foundation'
 import type { ControlSize } from './primitives.js'
 
 /** Native dialog owns focus containment and restoration, including nested dialogs. */
@@ -60,10 +60,12 @@ export interface SelectProps extends Omit<SelectHTMLAttributes, 'value' | 'size'
   size?: ControlSize
   onChange?: (value: string) => void
 }
-/** Native select provides keyboard navigation, typeahead and mobile pickers. */
+/** Shared styled popup retains the native form contract and keyboard behavior. */
 export const Select = /* @__PURE__ */ (() => {
   const Select: FunctionalComponent<SelectProps> = (props, { attrs }) =>
     h('select', mergeProps(attrs, {
+      onVnodeMounted: (node: VNode) => enhanceSelect(node.el as HTMLSelectElement),
+      onVnodeBeforeUnmount: (node: VNode) => disposeSelect(node.el as HTMLSelectElement),
       class: ['fastui-select', `fastui-select--${props.size ?? 'md'}`],
       value: props.options.some(option => option.value === props.value) ? props.value : '',
       disabled: props.disabled,

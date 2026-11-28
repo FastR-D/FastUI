@@ -9,6 +9,7 @@ export function styleFamily(className) {
   if (/^asset-/.test(name)) return 'asset'
   if (/^tone-/.test(name)) return 'tone'
   if (/^card(?:-|$)/.test(name)) return 'card'
+  if (/^select(?:-|$)/.test(name)) return 'select'
   if (name === 'modal-body') return 'dialog'
   return name
 }

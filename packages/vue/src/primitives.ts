@@ -1,6 +1,7 @@
+import { enhanceSelect, disposeSelect } from '@fastrd/ui-foundation'
 import {
   h, mergeProps, withDirectives, vModelDynamic, vModelText, vModelSelect,
-  type FunctionalComponent, type HTMLAttributes, type ButtonHTMLAttributes,
+  type VNode, type FunctionalComponent, type HTMLAttributes, type ButtonHTMLAttributes,
   type InputHTMLAttributes, type TextareaHTMLAttributes, type SelectHTMLAttributes, type SVGAttributes, type PropType,
 } from 'vue'
 
@@ -121,6 +122,8 @@ export const TextArea = /* @__PURE__ */ (() => {
 export const SelectField = /* @__PURE__ */ (() => {
   const SelectField: FunctionalComponent<SelectHTMLAttributes & ModelProps> = (props, { attrs, slots }) => {
     const vnode = h('select', mergeProps(attrs, {
+      onVnodeMounted: (node: VNode) => enhanceSelect(node.el as HTMLSelectElement),
+      onVnodeBeforeUnmount: (node: VNode) => disposeSelect(node.el as HTMLSelectElement),
       class: 'fastui-select', 'onUpdate:modelValue': props['onUpdate:modelValue'],
     }), slots.default?.())
     return props['onUpdate:modelValue'] ? withDirectives(vnode, [

@@ -217,3 +217,21 @@
   .fastui-progress { appearance: auto; }
   .fastui-skeleton { border: 1px solid GrayText; }
 }
+
+/* Single-select popup: shared by React, Vue and plain HTML enhancement. */
+.fastui-select[data-fastui-select] { appearance: none; padding-right: 28px; cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: right 13px center, right 9px center; background-size: 4px 4px; background-repeat: no-repeat; }
+.fastui-select-popup { position: fixed; inset: auto; z-index: 10000; box-sizing: border-box; margin: 0; padding: 6px; overflow: auto; overscroll-behavior: contain; border: 1px solid var(--fastui-border-strong); border-radius: 12px; background: var(--fastui-surface); color: var(--fastui-text); box-shadow: 0 10px 30px rgb(0 0 0 / 16%); font-family: var(--fastui-font); font-size: var(--fastui-font-size); scrollbar-width: thin; }
+.fastui-select-popup[hidden] { display: none; }
+.fastui-select-option { position: relative; display: flex; align-items: center; min-height: max(36px, var(--fastui-touch-target)); box-sizing: border-box; padding: 8px 32px 8px 10px; border-radius: 7px; cursor: pointer; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; }
+.fastui-select-option[hidden] { display: none; }
+.fastui-select-option[data-active] { background: var(--fastui-hover); outline: 1px solid var(--fastui-border); outline-offset: -1px; }
+.fastui-select-option[aria-selected=true] { color: var(--fastui-selected-text); background: var(--fastui-selected); font-weight: 600; }
+.fastui-select-option[aria-selected=true]::after { content: '✓'; position: absolute; right: 10px; }
+.fastui-select-option[aria-disabled=true] { opacity: var(--fastui-disabled-opacity); cursor: not-allowed; }
+.fastui-select-group, .fastui-select-empty { padding: 8px 10px; color: var(--fastui-muted); font-size: 12px; }
+.fastui-select-group { font-weight: 600; }
+@media (forced-colors: active) {
+  .fastui-select-popup { border: 1px solid ButtonText; background: Canvas; color: CanvasText; }
+  .fastui-select-option[data-active] { outline: 2px solid Highlight; }
+  .fastui-select-option[aria-selected=true] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+}
