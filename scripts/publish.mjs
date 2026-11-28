@@ -51,8 +51,8 @@ if (process.argv[2] !== '--check-source') {
     throw new Error('Verification must list exactly the three expected packages without duplicates')
   }
   const results = await json(`${directory}/results.json`)
-  if (results.status !== 'passed' || results.scenarios?.length !== 65 || results.packagesSha256 !== hash('sha256', packageBytes)) {
-    throw new Error('Passing 65-scenario verification must bind the exact packages.json digest')
+  if (results.status !== 'passed' || !Array.isArray(results.scenarios) || results.scenarios.length < 65 || results.scenarios.some(name => typeof name !== 'string' || !name.trim()) || new Set(results.scenarios).size !== results.scenarios.length || results.packagesSha256 !== hash('sha256', packageBytes)) {
+    throw new Error('Passing verification requires at least 65 unique scenarios bound to the exact packages.json digest')
   }
   // Validate the whole fixed package set before the first registry write.
   const candidates = await Promise.all(manifests.map(async source => {

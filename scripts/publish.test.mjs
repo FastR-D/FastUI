@@ -263,8 +263,12 @@ const rejections = [
   ['unknown package', { packages: rows => { rows[2].name = '@other/unknown' } }, /Unexpected verified/, 0],
   ['wrong package filename', { packages: rows => { rows[0].file = '../other.tgz' } }, /Unexpected verified/, 0],
   ['wrong verified digest', { packages: rows => { rows[0].sha256 = '0'.repeat(64) } }, /SHA-256 differs/, 0],
-  ['unbound results', { results: result => { result.packagesSha256 = '0'.repeat(64) } }, /65-scenario verification/, 0],
-  ['failed verification', { results: result => { result.status = 'failed' } }, /65-scenario verification/, 0],
+  ['unbound results', { results: result => { result.packagesSha256 = '0'.repeat(64) } }, /Passing verification/, 0],
+  ['too few verification scenarios', { results: result => { result.scenarios.pop() } }, /Passing verification/, 0],
+  ['duplicate verification scenarios', { results: result => { result.scenarios[64] = result.scenarios[0] } }, /Passing verification/, 0],
+  ['malformed verification scenarios', { results: result => { result.scenarios = { length: 65 } } }, /Passing verification/, 0],
+  ['empty verification scenario name', { results: result => { result.scenarios[64] = ' ' } }, /Passing verification/, 0],
+  ['failed verification', { results: result => { result.status = 'failed' } }, /Passing verification/, 0],
   ['wrong packed name', { packed: manifest => { manifest.name = '@other/pkg' } }, /Packed manifest/, 0],
   ['wrong packed version', { packed: manifest => { manifest.version = '9.9.9' } }, /Packed manifest/, 0],
   ['wrong packed repository', { packed: manifest => { manifest.repository.url = 'git+https://other.invalid/x.git' } }, /Packed manifest/, 0],
@@ -310,4 +314,10 @@ for (const [name, options, pattern] of [
   const { events, error } = await scenario(options)
   assert.match(error.message, pattern)
   assert.equal(events.filter(([kind]) => kind === 'publish').length, 0)
+})
+
+test('expanded verification suite keeps exact artifact binding and permits release', async () => {
+  const { events, error } = await scenario({ results: result => { result.scenarios.push('select:react', 'select:vue', 'select:react18', 'select:popup') } })
+  assert.ifError(error)
+  assert.equal(events.filter(([kind]) => kind === 'publish').length, 3)
 })

@@ -47,3 +47,5 @@ allowlist. Package files, dependencies, build scripts and every other payload in
 must be unchanged since the tag. A changed payload requires a new version.
 The provenance source is the retry commit, containing the identical release payload
 and the controller fix; the version tag remains immutable.
+
+Verification must contain at least 65 distinct, non-empty passing scenario names and bind the exact packages.json digest. Adding acceptance scenarios must not require reducing the suite to the historical count.
